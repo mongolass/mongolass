@@ -42,7 +42,7 @@
     "bluebird": "^3.5.0",
     "co": "4.6.0",
     "debug": "2.6.3",
-    "inflected": "1.1.7",
+    "inflected": "2.0.0",
     "lodash": "4.17.4",
     "mongodb": "2.2.25",
     "mongolass-plugin-populate": "*",
