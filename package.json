@@ -44,7 +44,7 @@
     "debug": "2.6.3",
     "inflected": "1.1.7",
     "lodash": "4.17.4",
-    "mongodb": "2.2.25",
+    "mongodb": "2.2.26",
     "mongolass-plugin-populate": "*",
     "validator": "7.0.0"
   },
