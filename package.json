@@ -46,7 +46,7 @@
     "lodash": "4.17.4",
     "mongodb": "2.2.25",
     "mongolass-plugin-populate": "*",
-    "validator": "7.0.0"
+    "validator": "7.1.0"
   },
   "devDependencies": {
     "co-mocha": "^1.1.3",
