@@ -1,3 +1,7 @@
+## 4.1.4/2018-04-11
+
+- update `another-json-schema`
+
 ## 4.1.3/2018-01-19
 
 - fix: test
