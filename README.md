@@ -254,6 +254,22 @@ const User = mongolass.model('User', {
 })()
 ```
 
+## Types
+
+- string
+- number
+- boolean
+- Mongolass.Types.ObjectId
+- Mongolass.Types.String
+- Mongolass.Types.Number
+- Mongolass.Types.Date
+- Mongolass.Types.Buffer
+- Mongolass.Types.Boolean
+- Mongolass.Types.Mixed
+
+**What's difference between `number` and `Mongolass.Types.Number` ?**
+`number` only check type, `Mongolass.Types.Number` will try to convert value to a number, if failed then throw error.
+
 ## Plugins
 
 ```js

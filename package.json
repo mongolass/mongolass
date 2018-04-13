@@ -1,6 +1,6 @@
 {
   "name": "mongolass",
-  "version": "4.1.4",
+  "version": "4.2.0",
   "description": "Elegant MongoDB driver for Node.js.",
   "main": "lib/index.js",
   "scripts": {

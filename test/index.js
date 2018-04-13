@@ -39,20 +39,20 @@ describe('index.js', function () {
     assert.deepEqual(error.message, 'Already connected to ' + MONGODB + ', please create another connection.')
   })
 
-  it('connect with auth', function * () {
-    const mongolass2 = new Mongolass('mongodb://admin:123456@ds247587.mlab.com:47587/mongolass')
+  // it('connect with auth', function * () {
+  //   const mongolass2 = new Mongolass('mongodb://admin:123456@ds247587.mlab.com:47587/mongolass')
 
-    const User = mongolass2.model('User')
-    const name = Date.now()
+  //   const User = mongolass2.model('User')
+  //   const name = Date.now()
 
-    yield User.insert({ name })
-    const user = yield User.findOne({ name })
-    assert.ok(user)
-    assert.ok(user._id)
-    assert.deepEqual(user.name, name)
+  //   yield User.insert({ name })
+  //   const user = yield User.findOne({ name })
+  //   assert.ok(user)
+  //   assert.ok(user._id)
+  //   assert.deepEqual(user.name, name)
 
-    yield mongolass2.disconnect()
-  })
+  //   yield mongolass2.disconnect()
+  // })
 
   it('connect failed', function * () {
     let error

@@ -1,3 +1,7 @@
+## 4.2.0/2018-04-13
+
+- add some Types
+
 ## 4.1.4/2018-04-11
 
 - update `another-json-schema`
