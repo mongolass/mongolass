@@ -1,3 +1,8 @@
+## 4.2.1/2018-05-14
+
+- update deps
+- use AJS Types
+
 ## 4.2.0/2018-04-13
 
 - add some Types
