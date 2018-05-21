@@ -1,3 +1,7 @@
+## 4.3.0/2018-05-21
+
+- fix: `_formatSetOrSetOnInsert`
+
 ## 4.2.1/2018-05-14
 
 - update deps
