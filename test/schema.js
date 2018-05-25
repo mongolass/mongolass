@@ -826,6 +826,24 @@ describe('schema.js', function () {
       assert.deepEqual(user.age, undefined)
     })
 
+    it('update doc no schema defined', function * () {
+      const name = String(Date.now())
+      let error
+      try {
+        yield User.update({ name }, { $set: { gender: 'male' } })
+      } catch (e) {
+        error = e
+      }
+      assert.deepEqual(error, {
+        model: 'User',
+        op: 'update',
+        args: [ { name: name }, { '$set': { gender: 'male' } } ],
+        pluginName: 'MongolassSchema',
+        pluginOp: 'beforeUpdate',
+        pluginArgs: []
+      })
+    })
+
     it('update posts array', function * () {
       let error
       const name = String(Date.now())
