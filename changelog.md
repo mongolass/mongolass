@@ -1,3 +1,7 @@
+## 4.3.2/2018-06-05
+
+- fix `_formatQuery` error
+
 ## 4.3.1/2018-05-25
 
 - fix $set & $setOnInsert no schema error
