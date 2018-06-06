@@ -1102,9 +1102,18 @@ describe('schema.js', function () {
 
     it('$push', function * () {
       yield User.update({ name: 'aaa' }, { $push: {
-        'posts.0.comments': { $each: ['333333333333333333333333', '555555555555555555555555', '666666666666666666666666'] }
+        posts: {
+          title: 'bbb',
+          comments: ['111111111111111111111111']
+        }
       } })
       let doc = yield User.findOne({ name: 'aaa' })
+      assert.deepEqual(doc.posts.length, 2)
+
+      yield User.update({ name: 'aaa' }, { $push: {
+        'posts.0.comments': { $each: ['333333333333333333333333', '555555555555555555555555', '666666666666666666666666'] }
+      } })
+      doc = yield User.findOne({ name: 'aaa' })
       assert.deepEqual(doc.posts[0].comments.length, 4)
     })
 
