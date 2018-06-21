@@ -1,6 +1,6 @@
 {
   "name": "mongolass",
-  "version": "4.3.3",
+  "version": "4.3.4",
   "description": "Elegant MongoDB driver for Node.js.",
   "main": "lib/index.js",
   "scripts": {
@@ -40,7 +40,7 @@
     "node": ">=8"
   },
   "dependencies": {
-    "another-json-schema": "^3.6.0",
+    "another-json-schema": "^3.7.0",
     "debug": "3.1.0",
     "inflected": "2.0.4",
     "lodash": "4.17.10",
