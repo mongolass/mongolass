@@ -50,7 +50,7 @@ describe('model.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Wrong plugin name or hooks')
+    assert.deepStrictEqual(error.message, 'Wrong plugin name or hooks')
 
     User.plugin('descSortAndToUpper', {
       beforeFind: function (key) {
@@ -69,6 +69,6 @@ describe('model.js', function () {
       }
     })
     let usernames = yield User.find().descSortAndToUpper('name')
-    assert.deepEqual(usernames, [ 'BBB', 'AAA' ])
+    assert.deepStrictEqual(usernames, [ 'BBB', 'AAA' ])
   })
 })

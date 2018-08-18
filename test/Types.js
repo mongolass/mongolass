@@ -45,7 +45,7 @@ describe('Types.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, '($.uid: "123") ✖ (type: ObjectId)')
+    assert.deepStrictEqual(error.message, '($.uid: "123") ✖ (type: ObjectId)')
   })
 
   it('ObjectId wrong', function * () {
@@ -55,54 +55,54 @@ describe('Types.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, '($.uid: "haha") ✖ (type: ObjectId)')
+    assert.deepStrictEqual(error.message, '($.uid: "haha") ✖ (type: ObjectId)')
   })
 
   it('ObjectId', function * () {
     let user = yield User.findOne({ uid: '111111111111111111111111' })
     assert.ok(typeof user._id === 'object')
-    assert.deepEqual(user.uid.toString(), '111111111111111111111111')
+    assert.deepStrictEqual(user.uid.toString(), '111111111111111111111111')
   })
 
   it('String', function * () {
     let user = yield User.findOne({ string: 111 })
-    assert.deepEqual(user.string, '111')
+    assert.deepStrictEqual(user.string, '111')
   })
 
   it('Number', function * () {
     let user = yield User.findOne({ number: 1.2 })
-    assert.deepEqual(user.number, 1.2)
+    assert.deepStrictEqual(user.number, 1.2)
 
     user = yield User.findOne({ number: 'haha' })
-    assert.deepEqual(user, null)
+    assert.deepStrictEqual(user, null)
   })
 
   it('Date', function * () {
     let user = yield User.findOne({ date: '2018-04-13' })
-    assert.deepEqual(user.date, new Date('2018-04-13'))
+    assert.deepStrictEqual(user.date, new Date('2018-04-13'))
 
     user = yield User.findOne({ date: 'haha' })
-    assert.deepEqual(user, null)
+    assert.deepStrictEqual(user, null)
   })
 
   it('Buffer', function * () {
     let user = yield User.findOne({ buffer: '123' })
-    assert.deepEqual(user.buffer.toString(), '123')
+    assert.deepStrictEqual(user.buffer.toString(), '123')
 
     user = yield User.findOne({ buffer: Buffer.from('123') })
-    assert.deepEqual(user.buffer.toString(), '123')
+    assert.deepStrictEqual(user.buffer.toString(), '123')
 
     user = yield User.findOne({ buffer: 1 })
-    assert.deepEqual(user, null)
+    assert.deepStrictEqual(user, null)
   })
 
   it('Boolean', function * () {
     let user = yield User.findOne({ boolean: 1 })
-    assert.deepEqual(user.boolean, true)
+    assert.deepStrictEqual(user.boolean, true)
   })
 
   it('Mixed', function * () {
     let user = yield User.findOne({ uid: '111111111111111111111111' })
-    assert.deepEqual(user.mixed, { names: ['tom', 'xp'] })
+    assert.deepStrictEqual(user.mixed, { names: ['tom', 'xp'] })
   })
 })

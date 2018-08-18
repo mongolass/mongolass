@@ -1,6 +1,7 @@
 const MONGODB = process.env.MONGODB || 'mongodb://localhost:27017/test'
 
 const assert = require('assert')
+const _ = require('lodash')
 const Mongolass = require('..')
 const mongolass = new Mongolass(MONGODB)
 
@@ -28,14 +29,14 @@ describe('query.js', function () {
   it('exec', function * () {
     let error
     let users = yield User.find().select({ _id: 0 }).exec()
-    assert.deepEqual(users, [ { name: 'aaa', age: 2 }, { name: 'bbb', age: 1 } ])
+    assert.deepStrictEqual(users, [ { name: 'aaa', age: 2 }, { name: 'bbb', age: 1 } ])
 
     try {
       yield User.find().select({ _id: 0 }).oops().exec()
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       model: 'User',
       op: 'find',
       args: [ {}, { projection: { _id: 0 } } ],
@@ -52,16 +53,16 @@ describe('query.js', function () {
   it('cursor', function * () {
     let error
     let usersCursor = yield User.find().select({ _id: 0 }).cursor()
-    assert.deepEqual(typeof usersCursor.toArray, 'function')
-    assert.deepEqual(typeof usersCursor.next, 'function')
-    assert.deepEqual(typeof usersCursor.hasNext, 'function')
+    assert.deepStrictEqual(typeof usersCursor.toArray, 'function')
+    assert.deepStrictEqual(typeof usersCursor.next, 'function')
+    assert.deepStrictEqual(typeof usersCursor.hasNext, 'function')
 
     try {
       usersCursor = yield User.find(0).select({ _id: 0 }).cursor()
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.pick(error, 'name', 'message', 'driver', 'op', 'args', 'model', 'schema'), {
       name: 'MongoError',
       message: 'query selector must be an object',
       driver: true,
@@ -79,18 +80,18 @@ describe('query.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Not support callback for method: find, please call .exec() or .cursor()')
+    assert.deepStrictEqual(error.message, 'Not support callback for method: find, please call .exec() or .cursor()')
     try {
       yield User.find({}, { _id: 0 }, { sort: { age: -1 } })
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Only support this usage: find(query, options)')
+    assert.deepStrictEqual(error.message, 'Only support this usage: find(query, options)')
   })
 
   it('_bindGetter', function * () {
     let collName = yield User.collectionName
-    assert.deepEqual(collName, 'users')
+    assert.deepStrictEqual(collName, 'users')
   })
 
   it('_bindSetter', function * () {

@@ -36,7 +36,7 @@ describe('index.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Already connected to ' + MONGODB + ', please create another connection.')
+    assert.deepStrictEqual(error.message, 'Already connected to ' + MONGODB + ', please create another connection.')
   })
 
   // it('connect with auth', function * () {
@@ -49,7 +49,7 @@ describe('index.js', function () {
   //   const user = yield User.findOne({ name })
   //   assert.ok(user)
   //   assert.ok(user._id)
-  //   assert.deepEqual(user.name, name)
+  //   assert.deepStrictEqual(user.name, name)
 
   //   yield mongolass2.disconnect()
   // })
@@ -62,28 +62,22 @@ describe('index.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
-      name: 'MongoNetworkError',
-      message: 'failed to connect to server [localhost:27018] on first connect [MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27018]',
-      op: 'find',
-      args: [],
-      model: 'User',
-      schema: null
-    })
+    assert.deepStrictEqual(error.name, 'MongoNetworkError')
+    assert.deepStrictEqual(error.message, 'failed to connect to server [localhost:27018] on first connect [MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27018]')
   })
 
   it('disconnect', function * () {
     let mongolass2 = new Mongolass()
     yield mongolass2.connect(MONGODB)
     yield mongolass2.disconnect()
-    assert.deepEqual(mongolass2._client, null)
-    assert.deepEqual(mongolass2._db, null)
+    assert.deepStrictEqual(mongolass2._client, null)
+    assert.deepStrictEqual(mongolass2._db, null)
 
     let mongolass3 = new Mongolass(MONGODB)
     yield mongolass3.connect()
     yield mongolass3.disconnect()
-    assert.deepEqual(mongolass3._client, null)
-    assert.deepEqual(mongolass3._db, null)
+    assert.deepStrictEqual(mongolass3._client, null)
+    assert.deepStrictEqual(mongolass3._db, null)
 
     let mongolass4 = new Mongolass(MONGODB)
     yield mongolass4.disconnect()
@@ -98,14 +92,14 @@ describe('index.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Missing schema name')
+    assert.deepStrictEqual(error.message, 'Missing schema name')
 
     try {
       UserSchema = mongolass.schema('User', 'aaa')
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Wrong schemaJSON for schema: User')
+    assert.deepStrictEqual(error.message, 'Wrong schemaJSON for schema: User')
 
     UserSchema = mongolass.schema('User', {
       name: { type: 'string' },
@@ -125,7 +119,7 @@ describe('index.js', function () {
     try {
       UserSchema = mongolass.schema('User2')
     } catch (e) { error = e }
-    assert.deepEqual(error.message, 'No schema: User2')
+    assert.deepStrictEqual(error.message, 'No schema: User2')
   })
 
   it('model', function * () {
@@ -142,14 +136,14 @@ describe('index.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Missing model name')
+    assert.deepStrictEqual(error.message, 'Missing model name')
 
     try {
       User = mongolass.model('User', 'aaa')
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Wrong schemaJSON for schema: UserSchema')
+    assert.deepStrictEqual(error.message, 'Wrong schemaJSON for schema: UserSchema')
 
     User = mongolass.model('User', UserSchema)
     assert.ok(User instanceof Model)
@@ -178,7 +172,7 @@ describe('index.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Wrong plugin name or hooks')
+    assert.deepStrictEqual(error.message, 'Wrong plugin name or hooks')
 
     mongolass.plugin('map', {
       afterFind: function (result, key) {
@@ -195,10 +189,10 @@ describe('index.js', function () {
       }
     })
     let usernames = yield User.find().map('_id').idToString()
-    assert.deepEqual(usernames[0].length, 24)
-    assert.deepEqual(usernames[1].length, 24)
-    assert.deepEqual(typeof usernames[0], 'string')
-    assert.deepEqual(typeof usernames[1], 'string')
+    assert.deepStrictEqual(usernames[0].length, 24)
+    assert.deepStrictEqual(usernames[1].length, 24)
+    assert.deepStrictEqual(typeof usernames[0], 'string')
+    assert.deepStrictEqual(typeof usernames[1], 'string')
   })
 
   it('.createCollection & dropCollection & .listCollections', function * () {

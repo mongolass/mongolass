@@ -1,3 +1,10 @@
+## 4.4.0/2018-08-18
+
+- update deps
+- use `{ useNewUrlParser: true }`
+- assert.deepEqual -> assert.deepStrictEqual
+- fix tests
+
 ## 4.3.4/2018-06-21
 
 - update AJS@3.7.0

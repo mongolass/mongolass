@@ -1,6 +1,7 @@
 const MONGODB = process.env.MONGODB || 'mongodb://localhost:27017/test'
 
 const assert = require('assert')
+const _ = require('lodash')
 const Mongolass = require('..')
 const Schema = Mongolass.Schema
 const ObjectId = Mongolass.ObjectId
@@ -60,7 +61,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'required',
       path: '$.name',
       actual: undefined,
@@ -85,8 +86,8 @@ describe('schema.js', function () {
     const name = String(Date.now())
     yield User.insert({ name })
     const user = yield User.findOne({ name })
-    assert.deepEqual(user.name, name)
-    assert.deepEqual(user.age, 18)
+    assert.deepStrictEqual(user.name, name)
+    assert.deepStrictEqual(user.age, 18)
 
     yield User.deleteMany({ name })
   })
@@ -107,7 +108,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error.message, 'Schema must have a name')
+    assert.deepStrictEqual(error.message, 'Schema must have a name')
   })
 
   it('beforeBulkWrite', function * () {
@@ -117,7 +118,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -136,7 +137,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: 101,
       expected: { type: 'number', range: [ 0, 100 ] },
@@ -155,7 +156,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -195,7 +196,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -216,38 +217,38 @@ describe('schema.js', function () {
 
   it('beforeCount', function * () {
     let count = yield User.count({ name: 'aaa' })
-    assert.deepEqual(count, 1)
+    assert.deepStrictEqual(count, 1)
 
     count = yield User.count({ refe: '111111111111111111111111' })
-    assert.deepEqual(count, 1)
+    assert.deepStrictEqual(count, 1)
 
     count = yield User.count({ refe: ObjectId('111111111111111111111111') })
-    assert.deepEqual(count, 1)
+    assert.deepStrictEqual(count, 1)
   })
 
   it('beforeDeleteMany', function * () {
     yield User.deleteMany({ refe: '222222222222222222222222' })
 
     let count = yield User.count()
-    assert.deepEqual(count, 1)
+    assert.deepStrictEqual(count, 1)
   })
 
   it('beforeDeleteOne', function * () {
     yield User.deleteOne({ refe: '222222222222222222222222' })
 
     let count = yield User.count()
-    assert.deepEqual(count, 1)
+    assert.deepStrictEqual(count, 1)
   })
 
   it('beforeDistinct', function * () {
     let count = yield User.distinct('name')
-    assert.deepEqual(count, ['aaa', 'bbb'])
+    assert.deepStrictEqual(count, ['aaa', 'bbb'])
 
     count = yield User.distinct('name', { refe: '111111111111111111111111' })
-    assert.deepEqual(count, ['bbb'])
+    assert.deepStrictEqual(count, ['bbb'])
 
     count = yield User.distinct('name', { refe: ObjectId('111111111111111111111111') })
-    assert.deepEqual(count, ['bbb'])
+    assert.deepStrictEqual(count, ['bbb'])
   })
 
   describe('beforeFind', function () {
@@ -255,7 +256,7 @@ describe('schema.js', function () {
       let docs = yield User
         .find({ refe: { $eq: '111111111111111111111111' } })
         .select({ _id: 0, name: 1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
     })
@@ -265,7 +266,7 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $gt: '000000000000000000000000' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -273,14 +274,14 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $gt: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $gt: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
     })
 
     it('$gte', function * () {
@@ -288,7 +289,7 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $gte: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -296,14 +297,14 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $gte: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $gte: '555555555555555555555555' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
     })
 
     it('$lt', function * () {
@@ -311,19 +312,19 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $lt: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
       docs = yield User
         .find({ 'posts.comments': { $lt: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $lt: '555555555555555555555555' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -334,19 +335,19 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $lte: '000000000000000000000000' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
       docs = yield User
         .find({ 'posts.comments': { $lte: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $lte: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -357,14 +358,14 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $ne: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $ne: '' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -375,7 +376,7 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $in: ['333333333333333333333333', ObjectId('444444444444444444444444')] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -383,14 +384,14 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $in: ['333333333333333333333333'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $in: ['aaa', 'bbb'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
     })
 
     it('$nin', function * () {
@@ -398,19 +399,19 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $nin: ['333333333333333333333333', ObjectId('444444444444444444444444')] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
       docs = yield User
         .find({ 'posts.comments': { $nin: ['333333333333333333333333'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $nin: ['aaa', 'bbb'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -426,7 +427,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -439,7 +440,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
     })
@@ -454,7 +455,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
       docs = yield User
         .find({
           $and: [
@@ -464,7 +465,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
     })
@@ -474,14 +475,14 @@ describe('schema.js', function () {
         .find({ 'posts.comments': { $not: { $gte: '444444444444444444444444' } } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
       docs = yield User
         .find({ 'posts.comments': { $not: { $lt: '333333333333333333333333' } } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -497,7 +498,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
       docs = yield User
         .find({
           $nor: [
@@ -507,7 +508,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
     })
@@ -519,7 +520,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
       docs = yield User
@@ -528,14 +529,14 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
       docs = yield User
         .find({
           'posts.comments': { $all: ['111111111111111111111111'] }
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [])
+      assert.deepStrictEqual(docs, [])
     })
 
     it('$elemMatch', function * () {
@@ -549,7 +550,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
       docs = yield User
@@ -563,7 +564,7 @@ describe('schema.js', function () {
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
-      assert.deepEqual(docs, [
+      assert.deepStrictEqual(docs, [
         { name: 'bbb' },
         { name: 'aaa' }
       ])
@@ -571,13 +572,13 @@ describe('schema.js', function () {
 
     it('$xxx', function * () {
       let count = yield User.count({ name: { $exists: true } })
-      assert.deepEqual(count, 2)
+      assert.deepStrictEqual(count, 2)
 
       count = yield User.count({ name: { $exists: true }, refe: '111111111111111111111111' })
-      assert.deepEqual(count, 1)
+      assert.deepStrictEqual(count, 1)
 
       count = yield User.count({ haha: { $exists: true } })
-      assert.deepEqual(count, 0)
+      assert.deepStrictEqual(count, 0)
     })
   })
 
@@ -588,7 +589,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: 101,
       expected: { type: 'number', range: [ 0, 100 ] },
@@ -616,15 +617,15 @@ describe('schema.js', function () {
     })
 
     let count = yield User.count()
-    assert.deepEqual(count, 2)
+    assert.deepStrictEqual(count, 2)
   })
 
   it('beforeFindOne', function * () {
     let doc = yield User.findOne({ refe: '222222222222222222222222' }).select({ _id: 0, name: 1 })
-    assert.deepEqual(doc, { name: 'aaa' })
+    assert.deepStrictEqual(doc, { name: 'aaa' })
 
     doc = yield User.findOne({ refe: ObjectId('222222222222222222222222') }).select({ _id: 0, name: 1 })
-    assert.deepEqual(doc, { name: 'aaa' })
+    assert.deepStrictEqual(doc, { name: 'aaa' })
   })
 
   it('beforeFindOneAndDelete', function * () {
@@ -640,7 +641,7 @@ describe('schema.js', function () {
     })
 
     let count = yield User.count()
-    assert.deepEqual(count, 2)
+    assert.deepStrictEqual(count, 2)
   })
 
   it('beforeFindOneAndReplace', function * () {
@@ -650,7 +651,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -672,7 +673,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: 101,
       expected: { type: 'number', range: [ 0, 100 ] },
@@ -694,7 +695,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -716,7 +717,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -738,7 +739,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
       expected: { type: 'number', range: [ 0, 100 ] },
@@ -758,11 +759,11 @@ describe('schema.js', function () {
       yield User.remove({ refe: '222222222222222222222222' })
 
       let count = yield User.count()
-      assert.deepEqual(count, 1)
+      assert.deepStrictEqual(count, 1)
     } catch (e) {
-      assert.deepEqual(e.op, 'remove')
-      assert.deepEqual(typeof e.args[0].refe, 'object')
-      assert.deepEqual(e.args[0].refe.toString(), '222222222222222222222222')
+      assert.deepStrictEqual(e.op, 'remove')
+      assert.deepStrictEqual(typeof e.args[0].refe, 'object')
+      assert.deepStrictEqual(e.args[0].refe.toString(), '222222222222222222222222')
       assert.ok(e.message.match('Cannot convert undefined or null to object'))
     }
   })
@@ -774,7 +775,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
       expected: { type: 'number', range: [ 0, 100 ] },
@@ -796,7 +797,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'type',
       actual: 1,
       expected: { type: 'string', required: true },
@@ -816,14 +817,14 @@ describe('schema.js', function () {
       const name = String(Date.now())
       yield User.insert({ name, age: 18 })
       let user = yield User.findOne({ name })
-      assert.deepEqual(user.name, name)
-      assert.deepEqual(user.age, 18)
+      assert.deepStrictEqual(user.name, name)
+      assert.deepStrictEqual(user.age, 18)
 
       yield User.update({ name }, {})
       user = yield User.findOne({ _id: user._id })
       assert.ok(user)
-      assert.deepEqual(user.name, undefined)
-      assert.deepEqual(user.age, undefined)
+      assert.deepStrictEqual(user.name, undefined)
+      assert.deepStrictEqual(user.age, undefined)
     })
 
     it('update doc no schema defined', function * () {
@@ -834,7 +835,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         model: 'User',
         op: 'update',
         args: [ { name: name }, { '$set': { gender: 'male' } } ],
@@ -849,15 +850,15 @@ describe('schema.js', function () {
       const name = String(Date.now())
       yield User.insert({ name })
       let user = yield User.findOne({ name })
-      assert.deepEqual(user.name, name)
-      assert.deepEqual(user.posts, undefined)
+      assert.deepStrictEqual(user.name, name)
+      assert.deepStrictEqual(user.posts, undefined)
 
       try {
         yield User.update({ name }, { posts: ['1'] })
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         path: '$.posts[]',
         actual: '1',
@@ -879,14 +880,14 @@ describe('schema.js', function () {
       let error
       yield User.update({ name: 'bbb' }, { $inc: { age: 1 } })
       let b = yield User.findOne({ name: 'bbb' })
-      assert.deepEqual(b.age, 2)
+      assert.deepStrictEqual(b.age, 2)
 
       try {
         yield User.update({ name: 'aaa' }, { $inc: { refe: 1 } })
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 1,
         expected: { type: Mongolass.Types.ObjectId },
@@ -914,7 +915,7 @@ describe('schema.js', function () {
 
       yield User.update({ name: 'bbb' }, { $set: { age: 3 } })
       let doc = yield User.findOne({ name: 'bbb' })
-      assert.deepEqual(doc.age, 3)
+      assert.deepStrictEqual(doc.age, 3)
 
       // wrong type
       try {
@@ -922,7 +923,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 1,
         expected: { type: Mongolass.Types.ObjectId },
@@ -942,10 +943,10 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         path: '$.posts[].comments[]',
-        actual: 1,
+        actual: '1',
         expected: [{ type: Mongolass.Types.ObjectId }],
         schema: 'User',
         model: 'User',
@@ -959,9 +960,9 @@ describe('schema.js', function () {
       yield User.update({ name: 'bbb' }, { $set: { 'posts': [] } })
       yield User.update({ name: 'bbb' }, { $set: { 'posts.0.comments': ['111111111111111111111111'] } })
       doc = yield User.findOne({ name: 'bbb' })
-      assert.deepEqual(doc.posts[0].comments.length, 1)
-      assert.deepEqual(typeof doc.posts[0].comments[0], 'object')
-      assert.deepEqual(doc.posts[0].comments[0].toString(), '111111111111111111111111')
+      assert.deepStrictEqual(doc.posts[0].comments.length, 1)
+      assert.deepStrictEqual(typeof doc.posts[0].comments[0], 'object')
+      assert.deepStrictEqual(doc.posts[0].comments[0].toString(), '111111111111111111111111')
 
       // nested doc
       try {
@@ -969,7 +970,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         path: '$.posts[].title',
         actual: 1,
@@ -988,7 +989,7 @@ describe('schema.js', function () {
       let error
       yield User.update({ name: 'ccc' }, { $setOnInsert: { age: 3 } }, { upsert: true })
       let doc = yield User.findOne({ name: 'ccc' }).select({ _id: 0 })
-      assert.deepEqual(doc, {
+      assert.deepStrictEqual(doc, {
         name: 'ccc',
         age: 3
       })
@@ -999,7 +1000,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 1,
         expected: { type: Mongolass.Types.ObjectId },
@@ -1022,7 +1023,7 @@ describe('schema.js', function () {
         error = e
       }
 
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 3,
         expected: [ { type: Mongolass.Types.ObjectId } ],
@@ -1043,10 +1044,10 @@ describe('schema.js', function () {
         }
       } })
       let doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].title, 'aaa')
-      assert.deepEqual(doc.posts[0].comments[0].toString(), '333333333333333333333333')
-      assert.deepEqual(doc.posts[1].title, 'aaa')
-      assert.deepEqual(doc.posts[1].comments[0].toString(), '555555555555555555555555')
+      assert.deepStrictEqual(doc.posts[0].title, 'aaa')
+      assert.deepStrictEqual(doc.posts[0].comments[0].toString(), '333333333333333333333333')
+      assert.deepStrictEqual(doc.posts[1].title, 'aaa')
+      assert.deepStrictEqual(doc.posts[1].comments[0].toString(), '555555555555555555555555')
 
       try {
         yield User.update({ name: 'aaa' }, { $addToSet: {
@@ -1058,7 +1059,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 0,
         expected: [ { type: Mongolass.Types.ObjectId } ],
@@ -1081,11 +1082,11 @@ describe('schema.js', function () {
       } })
 
       let doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 2)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 2)
 
       yield User.update({ 'posts.comments': '333333333333333333333333' }, { $pull: { 'posts.$.comments': { $in: ['555555555555555555555555'] } } })
       doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 1)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 1)
     })
 
     it('$pullAll', function * () {
@@ -1093,11 +1094,11 @@ describe('schema.js', function () {
         'posts.0.comments': { $each: ['555555555555555555555555', '666666666666666666666666'] }
       } })
       let doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 3)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 3)
 
       yield User.update({ 'posts.comments': '333333333333333333333333' }, { $pullAll: { 'posts.$.comments': ['555555555555555555555555', '666666666666666666666666'] } })
       doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 1)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 1)
     })
 
     it('$push', function * () {
@@ -1108,24 +1109,24 @@ describe('schema.js', function () {
         }
       } })
       let doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts.length, 2)
+      assert.deepStrictEqual(doc.posts.length, 2)
 
       yield User.update({ name: 'aaa' }, { $push: {
         'posts.0.comments': { $each: ['333333333333333333333333', '555555555555555555555555', '666666666666666666666666'] }
       } })
       doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 4)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 4)
     })
 
     it('$xxx', function * () {
       let doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 1)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 1)
 
       yield User.update({ name: 'aaa' }, { $pop: {
         'posts.0.comments': 1
       } })
       doc = yield User.findOne({ name: 'aaa' })
-      assert.deepEqual(doc.posts[0].comments.length, 0)
+      assert.deepStrictEqual(doc.posts[0].comments.length, 0)
     })
 
     it('wrong type', function * () {
@@ -1135,7 +1136,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.pick(error, 'name', 'message', 'driver', 'op', 'args', 'model', 'schema'), {
         name: 'MongoError',
         message: 'document must be a valid JavaScript object',
         driver: true,
@@ -1150,7 +1151,7 @@ describe('schema.js', function () {
       } catch (e) {
         error = e
       }
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'range',
         actual: -1,
         expected: { type: 'number', range: [ 0, 100 ] },
@@ -1170,7 +1171,7 @@ describe('schema.js', function () {
         error = e
       }
 
-      assert.deepEqual(error, {
+      assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'range',
         actual: -1,
         expected: { type: 'number', range: [ 0, 100 ] },
@@ -1193,7 +1194,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
       expected: { type: 'number', range: [ 0, 100 ] },
@@ -1215,7 +1216,7 @@ describe('schema.js', function () {
     } catch (e) {
       error = e
     }
-    assert.deepEqual(error, {
+    assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
       expected: { type: 'number', range: [ 0, 100 ] },
