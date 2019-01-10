@@ -243,14 +243,15 @@ const mongolass = new Mongolass('mongodb://localhost:27017/test')
 
 const User = mongolass.model('User', {
   name: { type: 'string', required: true },
-  age: { type: 'number', default: 18 }
+  age: { type: 'number', default: 18 },
+  createdAt: { type: Mongolass.Types.Date, default: Date.now }
 })
 
 ;(async function () {
   await User.insert({ name: 'nswbmw' })
   const user = await User.findOne({ name: 'nswbmw' })
   console.log(user)
-  // { _id: 5a530c5d39d9a4eb3aa57856, name: 'nswbmw', age: 18 }
+  // { _id: 5a530c5d39d9a4eb3aa57856, name: 'nswbmw', age: 18, createdAt: 2019-01-10T09:50:26.831Z }
 })()
 ```
 
