@@ -37,14 +37,16 @@ Or use **optional** schema:
 ```js
 const Mongolass = require('mongolass')
 const Schema = Mongolass.Schema
-const mongolass = new Mongolass('mongodb://localhost:27017/test')
+const mongolass = new Mongolass('mongodb://admin:123456@localhost:27017/admin', {
+  dbName: 'testdb'
+})
 
 const UserSchema = new Schema('UserSchema', {
   name: { type: 'string', required: true },
   age: { type: 'number', default: 18 }
 })
 const User = mongolass.model('User', UserSchema)
- 
+
 /*
 equal to:
 const User = mongolass.model('User', {
@@ -53,7 +55,7 @@ const User = mongolass.model('User', {
 })
 will create inner schema named `UserSchema`.
 */
- 
+
 User
   .insertOne({ name: 'nswbmw', age: 'wrong age' })
   .exec()
@@ -91,7 +93,6 @@ ObjectId schema:
 'use strict'
 
 const Mongolass = require('mongolass')
-const Schema = Mongolass.Schema
 const mongolass = new Mongolass('mongodb://localhost:27017/test')
 
 const Post = mongolass.model('Post', {
@@ -401,7 +402,6 @@ Mongolass has some built-in plugins, only for `find` and `findOne`.
 example:
 
 ```js
-const co = require('co')
 const Mongolass = require('mongolass')
 const mongolass = new Mongolass('mongodb://localhost:27017/test')
 const User = mongolass.model('User')
