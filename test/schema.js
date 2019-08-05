@@ -69,7 +69,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'insert',
-      args: [ { age: 18 } ],
+      args: [{ age: 18 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeInsert',
       pluginArgs: []
@@ -126,7 +126,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'bulkWrite',
-      args: [ [ { insertOne: { document: { name: 1, age: 1 } } } ] ],
+      args: [[{ insertOne: { document: { name: 1, age: 1 } } }]],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeBulkWrite',
       pluginArgs: []
@@ -140,12 +140,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: 101,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'bulkWrite',
-      args: [ [ { updateOne: { filter: { name: 'aaa' }, update: { age: 101 }, upsert: true } } ] ],
+      args: [[{ updateOne: { filter: { name: 'aaa' }, update: { age: 101 }, upsert: true } }]],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeBulkWrite',
       pluginArgs: []
@@ -164,7 +164,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'bulkWrite',
-      args: [ [ { updateMany: { filter: { name: 'aaa' }, update: { name: 1 }, upsert: true } } ] ],
+      args: [[{ updateMany: { filter: { name: 'aaa' }, update: { name: 1 }, upsert: true } }]],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeBulkWrite',
       pluginArgs: []
@@ -205,10 +205,10 @@ describe('schema.js', function () {
       model: 'User',
       op: 'bulkWrite',
       args:
-       [ [ { replaceOne:
-              { filter: { name: 'aaa' },
-                replacement: { name: 1, age: 1 },
-                upsert: true } } ] ],
+       [[{ replaceOne:
+            { filter: { name: 'aaa' },
+              replacement: { name: 1, age: 1 },
+              upsert: true } }]],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeBulkWrite',
       pluginArgs: []
@@ -229,14 +229,14 @@ describe('schema.js', function () {
   it('beforeDeleteMany', function * () {
     yield User.deleteMany({ refe: '222222222222222222222222' })
 
-    let count = yield User.count()
+    const count = yield User.count()
     assert.deepStrictEqual(count, 1)
   })
 
   it('beforeDeleteOne', function * () {
     yield User.deleteOne({ refe: '222222222222222222222222' })
 
-    let count = yield User.count()
+    const count = yield User.count()
     assert.deepStrictEqual(count, 1)
   })
 
@@ -253,7 +253,7 @@ describe('schema.js', function () {
 
   describe('beforeFind', function () {
     it('$eq', function * () {
-      let docs = yield User
+      const docs = yield User
         .find({ refe: { $eq: '111111111111111111111111' } })
         .select({ _id: 0, name: 1 })
       assert.deepStrictEqual(docs, [
@@ -592,12 +592,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: 101,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'findAndModify',
-      args: [ { name: 'aaa' }, { age: 1 }, { age: 101 } ],
+      args: [{ name: 'aaa' }, { age: 1 }, { age: 101 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeFindAndModify',
       pluginArgs: []
@@ -616,7 +616,7 @@ describe('schema.js', function () {
       }]
     })
 
-    let count = yield User.count()
+    const count = yield User.count()
     assert.deepStrictEqual(count, 2)
   })
 
@@ -640,7 +640,7 @@ describe('schema.js', function () {
       }]
     })
 
-    let count = yield User.count()
+    const count = yield User.count()
     assert.deepStrictEqual(count, 2)
   })
 
@@ -659,7 +659,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'findOneAndReplace',
-      args: [ { name: 'aaa' }, { name: 1, age: 1 } ],
+      args: [{ name: 'aaa' }, { name: 1, age: 1 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeFindOneAndReplace',
       pluginArgs: []
@@ -676,12 +676,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: 101,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'findOneAndUpdate',
-      args: [ { name: 'aaa' }, { age: 101 } ],
+      args: [{ name: 'aaa' }, { age: 101 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeFindOneAndUpdate',
       pluginArgs: []
@@ -703,7 +703,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'insert',
-      args: [ { name: 1, age: 101 } ],
+      args: [{ name: 1, age: 101 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeInsert',
       pluginArgs: []
@@ -725,7 +725,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'insertOne',
-      args: [ { name: 1, age: 101 } ],
+      args: [{ name: 1, age: 101 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeInsertOne',
       pluginArgs: []
@@ -742,12 +742,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'insertMany',
-      args: [ [ { name: 'ccc', age: 3 }, { name: 'ddd', age: -1 } ] ],
+      args: [[{ name: 'ccc', age: 3 }, { name: 'ddd', age: -1 }]],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeInsertMany',
       pluginArgs: []
@@ -758,7 +758,7 @@ describe('schema.js', function () {
     try {
       yield User.remove({ refe: '222222222222222222222222' })
 
-      let count = yield User.count()
+      const count = yield User.count()
       assert.deepStrictEqual(count, 1)
     } catch (e) {
       assert.deepStrictEqual(e.op, 'remove')
@@ -778,12 +778,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'replaceOne',
-      args: [ { name: 'aaa' }, { name: 'ddd', age: -1 } ],
+      args: [{ name: 'aaa' }, { name: 'ddd', age: -1 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeReplaceOne',
       pluginArgs: []
@@ -805,7 +805,7 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'save',
-      args: [ { name: 1, age: 101 } ],
+      args: [{ name: 1, age: 101 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeSave',
       pluginArgs: []
@@ -838,7 +838,7 @@ describe('schema.js', function () {
       assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         model: 'User',
         op: 'update',
-        args: [ { name: name }, { '$set': { gender: 'male' } } ],
+        args: [{ name: name }, { $set: { gender: 'male' } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -849,7 +849,7 @@ describe('schema.js', function () {
       let error
       const name = String(Date.now())
       yield User.insert({ name })
-      let user = yield User.findOne({ name })
+      const user = yield User.findOne({ name })
       assert.deepStrictEqual(user.name, name)
       assert.deepStrictEqual(user.posts, undefined)
 
@@ -864,12 +864,12 @@ describe('schema.js', function () {
         actual: '1',
         expected: [{
           title: { type: 'string' },
-          comments: [ { type: Mongolass.Types.ObjectId } ]
+          comments: [{ type: Mongolass.Types.ObjectId }]
         }],
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: name }, { posts: ['1'] } ],
+        args: [{ name: name }, { posts: ['1'] }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -879,7 +879,7 @@ describe('schema.js', function () {
     it('$inc', function * () {
       let error
       yield User.update({ name: 'bbb' }, { $inc: { age: 1 } })
-      let b = yield User.findOne({ name: 'bbb' })
+      const b = yield User.findOne({ name: 'bbb' })
       assert.deepStrictEqual(b.age, 2)
 
       try {
@@ -895,7 +895,7 @@ describe('schema.js', function () {
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { '$inc': { refe: 1 } } ],
+        args: [{ name: 'aaa' }, { $inc: { refe: 1 } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -931,7 +931,7 @@ describe('schema.js', function () {
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { '$set': { refe: 1 } } ],
+        args: [{ name: 'aaa' }, { $set: { refe: 1 } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -951,13 +951,13 @@ describe('schema.js', function () {
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { '$set': { 'posts.0.comments': ['1'] } } ],
+        args: [{ name: 'aaa' }, { $set: { 'posts.0.comments': ['1'] } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
       })
 
-      yield User.update({ name: 'bbb' }, { $set: { 'posts': [] } })
+      yield User.update({ name: 'bbb' }, { $set: { posts: [] } })
       yield User.update({ name: 'bbb' }, { $set: { 'posts.0.comments': ['111111111111111111111111'] } })
       doc = yield User.findOne({ name: 'bbb' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 1)
@@ -978,7 +978,7 @@ describe('schema.js', function () {
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'bbb' }, { '$set': { posts: { title: 1 } } } ],
+        args: [{ name: 'bbb' }, { $set: { posts: { title: 1 } } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -988,7 +988,7 @@ describe('schema.js', function () {
     it('$setOnInsert', function * () {
       let error
       yield User.update({ name: 'ccc' }, { $setOnInsert: { age: 3 } }, { upsert: true })
-      let doc = yield User.findOne({ name: 'ccc' }).select({ _id: 0 })
+      const doc = yield User.findOne({ name: 'ccc' }).select({ _id: 0 })
       assert.deepStrictEqual(doc, {
         name: 'ccc',
         age: 3
@@ -1008,7 +1008,7 @@ describe('schema.js', function () {
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { '$setOnInsert': { refe: 1 } } ],
+        args: [{ name: 'aaa' }, { $setOnInsert: { refe: 1 } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -1026,12 +1026,12 @@ describe('schema.js', function () {
       assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 3,
-        expected: [ { type: Mongolass.Types.ObjectId } ],
+        expected: [{ type: Mongolass.Types.ObjectId }],
         path: '$.posts[].comments[]',
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { '$addToSet': { 'posts.0.comments': 3 } } ],
+        args: [{ name: 'aaa' }, { $addToSet: { 'posts.0.comments': 3 } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -1043,7 +1043,7 @@ describe('schema.js', function () {
           comments: ['555555555555555555555555']
         }
       } })
-      let doc = yield User.findOne({ name: 'aaa' })
+      const doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].title, 'aaa')
       assert.deepStrictEqual(doc.posts[0].comments[0].toString(), '333333333333333333333333')
       assert.deepStrictEqual(doc.posts[1].title, 'aaa')
@@ -1062,14 +1062,16 @@ describe('schema.js', function () {
       assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'type',
         actual: 0,
-        expected: [ { type: Mongolass.Types.ObjectId } ],
+        expected: [{ type: Mongolass.Types.ObjectId }],
         path: '$.posts[].comments[]',
         schema: 'User',
         model: 'User',
         op: 'update',
         args:
-         [ { name: 'aaa' },
-           { '$addToSet': { posts: { title: 'aaa', comments: 0 } } } ],
+         [
+           { name: 'aaa' },
+           { $addToSet: { posts: { title: 'aaa', comments: 0 } } }
+         ],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -1141,7 +1143,7 @@ describe('schema.js', function () {
         message: 'document must be a valid JavaScript object',
         driver: true,
         op: 'update',
-        args: [ { name: 'aaa' }, null ],
+        args: [{ name: 'aaa' }, null],
         model: 'User',
         schema: 'User'
       })
@@ -1154,12 +1156,12 @@ describe('schema.js', function () {
       assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'range',
         actual: -1,
-        expected: { type: 'number', range: [ 0, 100 ] },
+        expected: { type: 'number', range: [0, 100] },
         path: '$.age',
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { age: -1 } ],
+        args: [{ name: 'aaa' }, { age: -1 }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -1174,12 +1176,12 @@ describe('schema.js', function () {
       assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
         validator: 'range',
         actual: -1,
-        expected: { type: 'number', range: [ 0, 100 ] },
+        expected: { type: 'number', range: [0, 100] },
         path: '$.age',
         schema: 'User',
         model: 'User',
         op: 'update',
-        args: [ { name: 'aaa' }, { '$set': { age: -1 } } ],
+        args: [{ name: 'aaa' }, { $set: { age: -1 } }],
         pluginName: 'MongolassSchema',
         pluginOp: 'beforeUpdate',
         pluginArgs: []
@@ -1197,12 +1199,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'updateOne',
-      args: [ { name: 'aaa' }, { age: -1 }, { multi: true } ],
+      args: [{ name: 'aaa' }, { age: -1 }, { multi: true }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeUpdateOne',
       pluginArgs: []
@@ -1219,12 +1221,12 @@ describe('schema.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       validator: 'range',
       actual: -1,
-      expected: { type: 'number', range: [ 0, 100 ] },
+      expected: { type: 'number', range: [0, 100] },
       path: '$.age',
       schema: 'User',
       model: 'User',
       op: 'updateMany',
-      args: [ { name: 'aaa' }, { age: -1 } ],
+      args: [{ name: 'aaa' }, { age: -1 }],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeUpdateMany',
       pluginArgs: []

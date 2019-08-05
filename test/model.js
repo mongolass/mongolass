@@ -21,18 +21,18 @@ describe('model.js', function () {
   })
 
   it('connect', function * () {
-    let coll = yield mongolass.model('User').connect()
+    const coll = yield mongolass.model('User').connect()
     assert.ok(coll instanceof Collection)
 
-    let coll2 = yield mongolass.model('User').connect()
+    const coll2 = yield mongolass.model('User').connect()
     assert.ok(coll2 instanceof Collection)
     assert.ok(coll === coll2)
   })
 
   it('model', function * () {
-    let User = mongolass.model('User')
-    let User2 = mongolass.model('User').model('User')
-    let User3 = mongolass.model('User').model('notExist').model('User')
+    const User = mongolass.model('User')
+    const User2 = mongolass.model('User').model('User')
+    const User3 = mongolass.model('User').model('notExist').model('User')
     assert.ok(User instanceof Model)
     assert.ok(User === User2)
     assert.ok(User === User3)
@@ -40,7 +40,7 @@ describe('model.js', function () {
 
   it('plugin', function * () {
     let error
-    let User = mongolass.model('User')
+    const User = mongolass.model('User')
     try {
       User.plugin('filter', function (result, key) {
         return result.map(function (item) {
@@ -54,7 +54,7 @@ describe('model.js', function () {
 
     User.plugin('descSortAndToUpper', {
       beforeFind: function (key) {
-        let opt = { sort: {} }
+        const opt = { sort: {} }
         opt.sort[key] = -1
         if (this._args.length === 0) {
           this._args.push({}, opt)
@@ -68,7 +68,7 @@ describe('model.js', function () {
         })
       }
     })
-    let usernames = yield User.find().descSortAndToUpper('name')
-    assert.deepStrictEqual(usernames, [ 'BBB', 'AAA' ])
+    const usernames = yield User.find().descSortAndToUpper('name')
+    assert.deepStrictEqual(usernames, ['BBB', 'AAA'])
   })
 })

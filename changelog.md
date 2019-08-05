@@ -1,3 +1,9 @@
+## 4.4.3/2019-08-05
+
+- add `dbName` option to `mongolass.connect`
+- update deps
+- update eslint
+
 ## 4.4.2/2018-01-10
 
 - upgrade deps

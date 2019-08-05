@@ -24,10 +24,10 @@ describe('index.js', function () {
 
   it('connect', function * () {
     let error
-    let db = yield mongolass.connect()
+    const db = yield mongolass.connect()
     assert.ok(db instanceof Db)
 
-    let db2 = yield mongolass.connect()
+    const db2 = yield mongolass.connect()
     assert.ok(db instanceof Db)
     assert.ok(db === db2)
 
@@ -67,19 +67,19 @@ describe('index.js', function () {
   })
 
   it('disconnect', function * () {
-    let mongolass2 = new Mongolass()
+    const mongolass2 = new Mongolass()
     yield mongolass2.connect(MONGODB)
     yield mongolass2.disconnect()
     assert.deepStrictEqual(mongolass2._client, null)
     assert.deepStrictEqual(mongolass2._db, null)
 
-    let mongolass3 = new Mongolass(MONGODB)
+    const mongolass3 = new Mongolass(MONGODB)
     yield mongolass3.connect()
     yield mongolass3.disconnect()
     assert.deepStrictEqual(mongolass3._client, null)
     assert.deepStrictEqual(mongolass3._db, null)
 
-    let mongolass4 = new Mongolass(MONGODB)
+    const mongolass4 = new Mongolass(MONGODB)
     yield mongolass4.disconnect()
   })
 
@@ -124,9 +124,8 @@ describe('index.js', function () {
 
   it('model', function * () {
     let User
-    let User2
     let error
-    let UserSchema = mongolass.schema('User', {
+    const UserSchema = mongolass.schema('User', {
       name: { type: 'string' },
       age: { type: 'number', range: [0, 100] }
     })
@@ -150,7 +149,7 @@ describe('index.js', function () {
     assert.ok(User === mongolass.model('User'))
     assert.ok(User._schema._name === 'User')
 
-    User2 = mongolass.model('User', {
+    const User2 = mongolass.model('User', {
       name: { type: 'string' },
       age: { type: 'number', range: [0, 100] }
     })
@@ -162,7 +161,7 @@ describe('index.js', function () {
 
   it('plugin', function * () {
     let error
-    let User = mongolass.model('User')
+    const User = mongolass.model('User')
     try {
       mongolass.plugin('map', function (result, key) {
         return result.map(function (item) {
@@ -188,7 +187,7 @@ describe('index.js', function () {
         })
       }
     })
-    let usernames = yield User.find().map('_id').idToString()
+    const usernames = yield User.find().map('_id').idToString()
     assert.deepStrictEqual(usernames[0].length, 24)
     assert.deepStrictEqual(usernames[1].length, 24)
     assert.deepStrictEqual(typeof usernames[0], 'string')

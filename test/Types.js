@@ -59,13 +59,13 @@ describe('Types.js', function () {
   })
 
   it('ObjectId', function * () {
-    let user = yield User.findOne({ uid: '111111111111111111111111' })
+    const user = yield User.findOne({ uid: '111111111111111111111111' })
     assert.ok(typeof user._id === 'object')
     assert.deepStrictEqual(user.uid.toString(), '111111111111111111111111')
   })
 
   it('String', function * () {
-    let user = yield User.findOne({ string: 111 })
+    const user = yield User.findOne({ string: 111 })
     assert.deepStrictEqual(user.string, '111')
   })
 
@@ -97,12 +97,12 @@ describe('Types.js', function () {
   })
 
   it('Boolean', function * () {
-    let user = yield User.findOne({ boolean: 1 })
+    const user = yield User.findOne({ boolean: 1 })
     assert.deepStrictEqual(user.boolean, true)
   })
 
   it('Mixed', function * () {
-    let user = yield User.findOne({ uid: '111111111111111111111111' })
+    const user = yield User.findOne({ uid: '111111111111111111111111' })
     assert.deepStrictEqual(user.mixed, { names: ['tom', 'xp'] })
   })
 })

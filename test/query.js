@@ -28,8 +28,8 @@ describe('query.js', function () {
 
   it('exec', function * () {
     let error
-    let users = yield User.find().select({ _id: 0 }).exec()
-    assert.deepStrictEqual(users, [ { name: 'aaa', age: 2 }, { name: 'bbb', age: 1 } ])
+    const users = yield User.find().select({ _id: 0 }).exec()
+    assert.deepStrictEqual(users, [{ name: 'aaa', age: 2 }, { name: 'bbb', age: 1 }])
 
     try {
       yield User.find().select({ _id: 0 }).oops().exec()
@@ -39,7 +39,7 @@ describe('query.js', function () {
     assert.deepStrictEqual(_.omit(error, 'message', 'stack'), {
       model: 'User',
       op: 'find',
-      args: [ {}, { projection: { _id: 0 } } ],
+      args: [{}, { projection: { _id: 0 } }],
       pluginName: 'oops',
       pluginArgs: [],
       pluginOp: 'afterFind',
@@ -67,7 +67,7 @@ describe('query.js', function () {
       message: 'query selector must be an object',
       driver: true,
       op: 'find',
-      args: [ 0, { projection: { _id: 0 } } ],
+      args: [0, { projection: { _id: 0 } }],
       model: 'User',
       schema: null
     })
@@ -90,7 +90,7 @@ describe('query.js', function () {
   })
 
   it('_bindGetter', function * () {
-    let collName = yield User.collectionName
+    const collName = yield User.collectionName
     assert.deepStrictEqual(collName, 'users')
   })
 
