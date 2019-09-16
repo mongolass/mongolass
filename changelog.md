@@ -1,3 +1,7 @@
+## 4.4.5/2019-09-16
+
+- add `useUnifiedTopology`
+
 ## 4.4.4/2019-09-16
 
 - update deps

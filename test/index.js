@@ -63,7 +63,7 @@ describe('index.js', function () {
       error = e
     }
     assert.deepStrictEqual(error.name, 'MongoNetworkError')
-    assert.deepStrictEqual(error.message, 'failed to connect to server [localhost:27018] on first connect [MongoNetworkError: connect ECONNREFUSED 127.0.0.1:27018]')
+    assert.deepStrictEqual(error.message, 'connect ECONNREFUSED 127.0.0.1:27018')
   })
 
   it('disconnect', function * () {
