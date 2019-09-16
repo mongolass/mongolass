@@ -204,11 +204,17 @@ describe('schema.js', function () {
       schema: 'User',
       model: 'User',
       op: 'bulkWrite',
-      args:
-       [[{ replaceOne:
-            { filter: { name: 'aaa' },
+      args: [
+        [
+          {
+            replaceOne: {
+              filter: { name: 'aaa' },
               replacement: { name: 1, age: 1 },
-              upsert: true } }]],
+              upsert: true
+            }
+          }
+        ]
+      ],
       pluginName: 'MongolassSchema',
       pluginOp: 'beforeBulkWrite',
       pluginArgs: []
@@ -1037,12 +1043,14 @@ describe('schema.js', function () {
         pluginArgs: []
       })
 
-      yield User.update({ name: 'aaa' }, { $addToSet: {
-        posts: {
-          title: 'aaa',
-          comments: ['555555555555555555555555']
+      yield User.update({ name: 'aaa' }, {
+        $addToSet: {
+          posts: {
+            title: 'aaa',
+            comments: ['555555555555555555555555']
+          }
         }
-      } })
+      })
       const doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].title, 'aaa')
       assert.deepStrictEqual(doc.posts[0].comments[0].toString(), '333333333333333333333333')
@@ -1050,12 +1058,14 @@ describe('schema.js', function () {
       assert.deepStrictEqual(doc.posts[1].comments[0].toString(), '555555555555555555555555')
 
       try {
-        yield User.update({ name: 'aaa' }, { $addToSet: {
-          posts: {
-            title: 'aaa',
-            comments: 0
+        yield User.update({ name: 'aaa' }, {
+          $addToSet: {
+            posts: {
+              title: 'aaa',
+              comments: 0
+            }
           }
-        } })
+        })
       } catch (e) {
         error = e
       }
@@ -1079,9 +1089,11 @@ describe('schema.js', function () {
     })
 
     it('$pull', function * () {
-      yield User.update({ name: 'aaa' }, { $addToSet: {
-        'posts.0.comments': '555555555555555555555555'
-      } })
+      yield User.update({ name: 'aaa' }, {
+        $addToSet: {
+          'posts.0.comments': '555555555555555555555555'
+        }
+      })
 
       let doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 2)
@@ -1092,9 +1104,11 @@ describe('schema.js', function () {
     })
 
     it('$pullAll', function * () {
-      yield User.update({ name: 'aaa' }, { $addToSet: {
-        'posts.0.comments': { $each: ['555555555555555555555555', '666666666666666666666666'] }
-      } })
+      yield User.update({ name: 'aaa' }, {
+        $addToSet: {
+          'posts.0.comments': { $each: ['555555555555555555555555', '666666666666666666666666'] }
+        }
+      })
       let doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 3)
 
@@ -1104,18 +1118,22 @@ describe('schema.js', function () {
     })
 
     it('$push', function * () {
-      yield User.update({ name: 'aaa' }, { $push: {
-        posts: {
-          title: 'bbb',
-          comments: ['111111111111111111111111']
+      yield User.update({ name: 'aaa' }, {
+        $push: {
+          posts: {
+            title: 'bbb',
+            comments: ['111111111111111111111111']
+          }
         }
-      } })
+      })
       let doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts.length, 2)
 
-      yield User.update({ name: 'aaa' }, { $push: {
-        'posts.0.comments': { $each: ['333333333333333333333333', '555555555555555555555555', '666666666666666666666666'] }
-      } })
+      yield User.update({ name: 'aaa' }, {
+        $push: {
+          'posts.0.comments': { $each: ['333333333333333333333333', '555555555555555555555555', '666666666666666666666666'] }
+        }
+      })
       doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 4)
     })
@@ -1124,9 +1142,11 @@ describe('schema.js', function () {
       let doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 1)
 
-      yield User.update({ name: 'aaa' }, { $pop: {
-        'posts.0.comments': 1
-      } })
+      yield User.update({ name: 'aaa' }, {
+        $pop: {
+          'posts.0.comments': 1
+        }
+      })
       doc = yield User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 0)
     })

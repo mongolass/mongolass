@@ -1,3 +1,9 @@
+## 4.4.4/2019-09-16
+
+- update deps
+- use `createIndex` instead of `ensureIndex`
+- fix eslint warning
+
 ## 4.4.3/2019-08-05
 
 - add `dbName` option to `mongolass.connect`
