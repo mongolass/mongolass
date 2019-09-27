@@ -1,3 +1,7 @@
+## 4.4.6/2019-09-27
+
+- compatible with `mongodb+srv://`
+
 ## 4.4.5/2019-09-16
 
 - add `useUnifiedTopology`
