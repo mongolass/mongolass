@@ -9,81 +9,84 @@ const Model = Mongolass.Model
 const mongolass = new Mongolass(MONGODB)
 
 describe('index.js', function () {
-  beforeEach(function * () {
-    yield mongolass.model('User').insertOne({ name: 'aaa', age: 2 })
-    yield mongolass.model('User').insertOne({ name: 'bbb', age: 1 })
+  beforeEach(async function () {
+    await mongolass.model('User').insertOne({ name: 'aaa', age: 2 })
+    await mongolass.model('User').insertOne({ name: 'bbb', age: 1 })
   })
 
-  afterEach(function * () {
-    yield mongolass.model('User').deleteMany()
+  afterEach(async function () {
+    await mongolass.model('User').deleteMany()
   })
 
-  after(function * () {
-    yield mongolass.disconnect()
+  after(async function () {
+    await mongolass.disconnect()
   })
 
-  it('connect', function * () {
+  it('connect', async function () {
     let error
-    const db = yield mongolass.connect()
+    const db = await mongolass.connect()
     assert.ok(db instanceof Db)
 
-    const db2 = yield mongolass.connect()
+    const db2 = await mongolass.connect()
     assert.ok(db instanceof Db)
     assert.ok(db === db2)
 
     try {
-      yield mongolass.connect('mongodb://localhost:27018/test')
+      await mongolass.connect('mongodb://localhost:27018/test')
     } catch (e) {
       error = e
     }
     assert.deepStrictEqual(error.message, 'Already connected to ' + MONGODB + ', please create another connection.')
   })
 
-  // it('connect with auth', function * () {
+  // it('connect with auth', async function () {
   //   const mongolass2 = new Mongolass('mongodb://admin:123456@ds247587.mlab.com:47587/mongolass')
 
   //   const User = mongolass2.model('User')
   //   const name = Date.now()
 
-  //   yield User.insert({ name })
-  //   const user = yield User.findOne({ name })
+  //   await User.insert({ name })
+  //   const user = await User.findOne({ name })
   //   assert.ok(user)
   //   assert.ok(user._id)
   //   assert.deepStrictEqual(user.name, name)
 
-  //   yield mongolass2.disconnect()
+  //   await mongolass2.disconnect()
   // })
 
-  it('connect failed', function * () {
+  it('connect failed', async function () {
     let error
-    const mongolass2 = new Mongolass('mongodb://localhost:27018/test')
+    const mongolass2 = new Mongolass('mongodb://localhost:27018/test', {
+      connectTimeoutMS: 1000,
+      useUnifiedTopology: false
+    })
     try {
-      yield mongolass2.model('User').find()
+      await mongolass2.model('User').find()
     } catch (e) {
       error = e
     }
     assert.deepStrictEqual(error.name, 'MongoNetworkError')
-    assert.deepStrictEqual(error.message, 'connect ECONNREFUSED 127.0.0.1:27018')
+    assert.deepStrictEqual(!!error.message.match('connect ECONNREFUSED 127.0.0.1:27018'), true)
   })
 
-  it('disconnect', function * () {
+  it('disconnect', async function () {
     const mongolass2 = new Mongolass()
-    yield mongolass2.connect(MONGODB)
-    yield mongolass2.disconnect()
+    await mongolass2.connect(MONGODB)
+    await mongolass2.disconnect()
     assert.deepStrictEqual(mongolass2._client, null)
     assert.deepStrictEqual(mongolass2._db, null)
 
     const mongolass3 = new Mongolass(MONGODB)
-    yield mongolass3.connect()
-    yield mongolass3.disconnect()
+    await mongolass3.connect()
+    await mongolass3.disconnect()
     assert.deepStrictEqual(mongolass3._client, null)
     assert.deepStrictEqual(mongolass3._db, null)
 
     const mongolass4 = new Mongolass(MONGODB)
-    yield mongolass4.disconnect()
+    await mongolass4.disconnect()
   })
 
-  it('schema', function * () {
+  it('schema', async function () {
     let UserSchema
     let error
 
@@ -122,7 +125,7 @@ describe('index.js', function () {
     assert.deepStrictEqual(error.message, 'No schema: User2')
   })
 
-  it('model', function * () {
+  it('model', async function () {
     let User
     let error
     const UserSchema = mongolass.schema('User', {
@@ -159,7 +162,7 @@ describe('index.js', function () {
     assert.ok(User2._schema._name === 'UserSchema')
   })
 
-  it('plugin', function * () {
+  it('plugin', async function () {
     let error
     const User = mongolass.model('User')
     try {
@@ -187,24 +190,24 @@ describe('index.js', function () {
         })
       }
     })
-    const usernames = yield User.find().map('_id').idToString()
+    const usernames = await User.find().map('_id').idToString()
     assert.deepStrictEqual(usernames[0].length, 24)
     assert.deepStrictEqual(usernames[1].length, 24)
     assert.deepStrictEqual(typeof usernames[0], 'string')
     assert.deepStrictEqual(typeof usernames[1], 'string')
   })
 
-  it('.createCollection & dropCollection & .listCollections', function * () {
-    yield mongolass.createCollection('test1')
-    yield mongolass.createCollection('test2')
-    let colls = yield mongolass.listCollections()
+  it('.createCollection & dropCollection & .listCollections', async function () {
+    await mongolass.createCollection('test1')
+    await mongolass.createCollection('test2')
+    let colls = await mongolass.listCollections()
     colls = _.map(colls, 'name')
     assert.ok(_.includes(colls, 'test1'))
     assert.ok(_.includes(colls, 'test2'))
 
-    yield mongolass.dropCollection('test1')
-    yield mongolass.dropCollection('test2')
-    colls = yield mongolass.listCollections()
+    await mongolass.dropCollection('test1')
+    await mongolass.dropCollection('test2')
+    colls = await mongolass.listCollections()
     colls = _.map(colls, 'name')
     assert.ok(!_.includes(colls, 'test1'))
     assert.ok(!_.includes(colls, 'test2'))

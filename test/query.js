@@ -13,26 +13,26 @@ User.plugin('oops', {
 })
 
 describe('query.js', function () {
-  beforeEach(function * () {
-    yield mongolass.model('User').insertOne({ name: 'aaa', age: 2 })
-    yield mongolass.model('User').insertOne({ name: 'bbb', age: 1 })
+  beforeEach(async function () {
+    await mongolass.model('User').insertOne({ name: 'aaa', age: 2 })
+    await mongolass.model('User').insertOne({ name: 'bbb', age: 1 })
   })
 
-  afterEach(function * () {
-    yield mongolass.model('User').deleteMany()
+  afterEach(async function () {
+    await mongolass.model('User').deleteMany()
   })
 
-  after(function * () {
-    yield mongolass.disconnect()
+  after(async function () {
+    await mongolass.disconnect()
   })
 
-  it('exec', function * () {
+  it('exec', async function () {
     let error
-    const users = yield User.find().select({ _id: 0 }).exec()
+    const users = await User.find().select({ _id: 0 }).exec()
     assert.deepStrictEqual(users, [{ name: 'aaa', age: 2 }, { name: 'bbb', age: 1 }])
 
     try {
-      yield User.find().select({ _id: 0 }).oops().exec()
+      await User.find().select({ _id: 0 }).oops().exec()
     } catch (e) {
       error = e
     }
@@ -50,15 +50,15 @@ describe('query.js', function () {
     })
   })
 
-  it('cursor', function * () {
+  it('cursor', async function () {
     let error
-    let usersCursor = yield User.find().select({ _id: 0 }).cursor()
+    let usersCursor = await User.find().select({ _id: 0 }).cursor()
     assert.deepStrictEqual(typeof usersCursor.toArray, 'function')
     assert.deepStrictEqual(typeof usersCursor.next, 'function')
     assert.deepStrictEqual(typeof usersCursor.hasNext, 'function')
 
     try {
-      usersCursor = yield User.find(0).select({ _id: 0 }).cursor()
+      usersCursor = await User.find(0).select({ _id: 0 }).cursor()
     } catch (e) {
       error = e
     }
@@ -73,32 +73,32 @@ describe('query.js', function () {
     })
   })
 
-  it('_bindMethod', function * () {
+  it('_bindMethod', async function () {
     let error
     try {
-      yield User.find({}, { sort: { age: -1 } }, console.log)
+      await User.find({}, { sort: { age: -1 } }, console.log)
     } catch (e) {
       error = e
     }
     assert.deepStrictEqual(error.message, 'Not support callback for method: find, please call .exec() or .cursor()')
     try {
-      yield User.find({}, { _id: 0 }, { sort: { age: -1 } })
+      await User.find({}, { _id: 0 }, { sort: { age: -1 } })
     } catch (e) {
       error = e
     }
     assert.deepStrictEqual(error.message, 'Only support this usage: find(query, options)')
   })
 
-  it('_bindGetter', function * () {
-    const collName = yield User.collectionName
+  it('_bindGetter', async function () {
+    const collName = await User.collectionName
     assert.deepStrictEqual(collName, 'users')
   })
 
-  it('_bindSetter', function * () {
+  it('_bindSetter', async function () {
     let error
     User.hint = { name: 1, age: -1 }
     try {
-      yield User.find()
+      await User.find()
     } catch (e) {
       error = e
     }

@@ -1,3 +1,8 @@
+## 4.4.7/2020-09-22
+
+- update deps
+- remove `co-mocha`
+
 ## 4.4.6/2019-09-27
 
 - compatible with `mongodb+srv://`

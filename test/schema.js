@@ -19,8 +19,8 @@ const UserSchema = new Schema('User', {
 const User = mongolass.model('User', UserSchema)
 
 describe('schema.js', function () {
-  beforeEach(function * () {
-    yield User.create({
+  beforeEach(async function () {
+    await User.create({
       name: 'aaa',
       age: 2,
       refe: ObjectId('222222222222222222222222'),
@@ -29,7 +29,7 @@ describe('schema.js', function () {
         comments: [ObjectId('333333333333333333333333')]
       }]
     })
-    yield User.create({
+    await User.create({
       name: 'bbb',
       age: 1,
       refe: ObjectId('111111111111111111111111'),
@@ -40,15 +40,15 @@ describe('schema.js', function () {
     })
   })
 
-  afterEach(function * () {
-    yield User.deleteMany()
+  afterEach(async function () {
+    await User.deleteMany()
   })
 
-  after(function * () {
-    yield mongolass.disconnect()
+  after(async function () {
+    await mongolass.disconnect()
   })
 
-  it('.required', function * () {
+  it('.required', async function () {
     const UserSchema = new Schema('User', {
       name: { type: 'string', required: true },
       age: { type: 'number' }
@@ -57,7 +57,7 @@ describe('schema.js', function () {
 
     let error
     try {
-      yield User.insert({ age: 18 })
+      await User.insert({ age: 18 })
     } catch (e) {
       error = e
     }
@@ -76,7 +76,7 @@ describe('schema.js', function () {
     })
   })
 
-  it('.default', function * () {
+  it('.default', async function () {
     const UserSchema = new Schema('User', {
       name: { type: 'string', required: true },
       age: { type: 'number', default: 18 }
@@ -84,15 +84,15 @@ describe('schema.js', function () {
     const User = mongolass.model('User', UserSchema)
 
     const name = String(Date.now())
-    yield User.insert({ name })
-    const user = yield User.findOne({ name })
+    await User.insert({ name })
+    const user = await User.findOne({ name })
     assert.deepStrictEqual(user.name, name)
     assert.deepStrictEqual(user.age, 18)
 
-    yield User.deleteMany({ name })
+    await User.deleteMany({ name })
   })
 
-  it('No schema name', function * () {
+  it('No schema name', async function () {
     let error
     try {
       /* eslint no-new: 0 */
@@ -111,10 +111,10 @@ describe('schema.js', function () {
     assert.deepStrictEqual(error.message, 'Schema must have a name')
   })
 
-  it('beforeBulkWrite', function * () {
+  it('beforeBulkWrite', async function () {
     let error
     try {
-      yield User.bulkWrite([{ insertOne: { document: { name: 1, age: 1 } } }])
+      await User.bulkWrite([{ insertOne: { document: { name: 1, age: 1 } } }])
     } catch (e) {
       error = e
     }
@@ -133,7 +133,7 @@ describe('schema.js', function () {
     })
 
     try {
-      yield User.bulkWrite([{ updateOne: { filter: { name: 'aaa' }, update: { age: 101 }, upsert: true } }])
+      await User.bulkWrite([{ updateOne: { filter: { name: 'aaa' }, update: { age: 101 }, upsert: true } }])
     } catch (e) {
       error = e
     }
@@ -152,7 +152,7 @@ describe('schema.js', function () {
     })
 
     try {
-      yield User.bulkWrite([{ updateMany: { filter: { name: 'aaa' }, update: { name: 1 }, upsert: true } }])
+      await User.bulkWrite([{ updateMany: { filter: { name: 'aaa' }, update: { name: 1 }, upsert: true } }])
     } catch (e) {
       error = e
     }
@@ -170,9 +170,9 @@ describe('schema.js', function () {
       pluginArgs: []
     })
 
-    yield User.bulkWrite([{ deleteOne: { filter: { refe: '222222222222222222222222' } } }])
-    yield User.bulkWrite([{ deleteMany: { filter: { refe: '111111111111111111111111' } } }])
-    yield User.create({
+    await User.bulkWrite([{ deleteOne: { filter: { refe: '222222222222222222222222' } } }])
+    await User.bulkWrite([{ deleteMany: { filter: { refe: '111111111111111111111111' } } }])
+    await User.create({
       name: 'aaa',
       age: 2,
       refe: ObjectId('222222222222222222222222'),
@@ -181,7 +181,7 @@ describe('schema.js', function () {
         comments: [ObjectId('333333333333333333333333')]
       }]
     })
-    yield User.create({
+    await User.create({
       name: 'bbb',
       age: 1,
       refe: ObjectId('111111111111111111111111'),
@@ -192,7 +192,7 @@ describe('schema.js', function () {
     })
 
     try {
-      yield User.bulkWrite([{ replaceOne: { filter: { name: 'aaa' }, replacement: { name: 1, age: 1 }, upsert: true } }])
+      await User.bulkWrite([{ replaceOne: { filter: { name: 'aaa' }, replacement: { name: 1, age: 1 }, upsert: true } }])
     } catch (e) {
       error = e
     }
@@ -221,45 +221,45 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeCount', function * () {
-    let count = yield User.count({ name: 'aaa' })
+  it('beforeCount', async function () {
+    let count = await User.count({ name: 'aaa' })
     assert.deepStrictEqual(count, 1)
 
-    count = yield User.count({ refe: '111111111111111111111111' })
+    count = await User.count({ refe: '111111111111111111111111' })
     assert.deepStrictEqual(count, 1)
 
-    count = yield User.count({ refe: ObjectId('111111111111111111111111') })
-    assert.deepStrictEqual(count, 1)
-  })
-
-  it('beforeDeleteMany', function * () {
-    yield User.deleteMany({ refe: '222222222222222222222222' })
-
-    const count = yield User.count()
+    count = await User.count({ refe: ObjectId('111111111111111111111111') })
     assert.deepStrictEqual(count, 1)
   })
 
-  it('beforeDeleteOne', function * () {
-    yield User.deleteOne({ refe: '222222222222222222222222' })
+  it('beforeDeleteMany', async function () {
+    await User.deleteMany({ refe: '222222222222222222222222' })
 
-    const count = yield User.count()
+    const count = await User.count()
     assert.deepStrictEqual(count, 1)
   })
 
-  it('beforeDistinct', function * () {
-    let count = yield User.distinct('name')
+  it('beforeDeleteOne', async function () {
+    await User.deleteOne({ refe: '222222222222222222222222' })
+
+    const count = await User.count()
+    assert.deepStrictEqual(count, 1)
+  })
+
+  it('beforeDistinct', async function () {
+    let count = await User.distinct('name')
     assert.deepStrictEqual(count, ['aaa', 'bbb'])
 
-    count = yield User.distinct('name', { refe: '111111111111111111111111' })
+    count = await User.distinct('name', { refe: '111111111111111111111111' })
     assert.deepStrictEqual(count, ['bbb'])
 
-    count = yield User.distinct('name', { refe: ObjectId('111111111111111111111111') })
+    count = await User.distinct('name', { refe: ObjectId('111111111111111111111111') })
     assert.deepStrictEqual(count, ['bbb'])
   })
 
   describe('beforeFind', function () {
-    it('$eq', function * () {
-      const docs = yield User
+    it('$eq', async function () {
+      const docs = await User
         .find({ refe: { $eq: '111111111111111111111111' } })
         .select({ _id: 0, name: 1 })
       assert.deepStrictEqual(docs, [
@@ -267,8 +267,8 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$gt', function * () {
-      let docs = yield User
+    it('$gt', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $gt: '000000000000000000000000' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -276,22 +276,22 @@ describe('schema.js', function () {
         { name: 'bbb' },
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $gt: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $gt: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
     })
 
-    it('$gte', function * () {
-      let docs = yield User
+    it('$gte', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $gte: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -299,34 +299,34 @@ describe('schema.js', function () {
         { name: 'bbb' },
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $gte: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $gte: '555555555555555555555555' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
     })
 
-    it('$lt', function * () {
-      let docs = yield User
+    it('$lt', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $lt: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $lt: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $lt: '555555555555555555555555' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -336,20 +336,20 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$lte', function * () {
-      let docs = yield User
+    it('$lte', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $lte: '000000000000000000000000' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $lte: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $lte: '444444444444444444444444' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -359,15 +359,15 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$ne', function * () {
-      let docs = yield User
+    it('$ne', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $ne: '333333333333333333333333' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $ne: '' } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -377,8 +377,8 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$in', function * () {
-      let docs = yield User
+    it('$in', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $in: ['333333333333333333333333', ObjectId('444444444444444444444444')] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -386,34 +386,34 @@ describe('schema.js', function () {
         { name: 'bbb' },
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $in: ['333333333333333333333333'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $in: ['aaa', 'bbb'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
     })
 
-    it('$nin', function * () {
-      let docs = yield User
+    it('$nin', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $nin: ['333333333333333333333333', ObjectId('444444444444444444444444')] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $nin: ['333333333333333333333333'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $nin: ['aaa', 'bbb'] } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -423,8 +423,8 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$or', function * () {
-      let docs = yield User
+    it('$or', async function () {
+      let docs = await User
         .find({
           $or: [
             { name: 'aaa' },
@@ -437,7 +437,7 @@ describe('schema.js', function () {
         { name: 'bbb' },
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({
           $or: [
             { name: 'aaa' },
@@ -451,8 +451,8 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$and', function * () {
-      let docs = yield User
+    it('$and', async function () {
+      let docs = await User
         .find({
           $and: [
             { name: 'aaa' },
@@ -462,7 +462,7 @@ describe('schema.js', function () {
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
-      docs = yield User
+      docs = await User
         .find({
           $and: [
             { name: 'aaa' },
@@ -476,15 +476,15 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$not', function * () {
-      let docs = yield User
+    it('$not', async function () {
+      let docs = await User
         .find({ 'posts.comments': { $not: { $gte: '444444444444444444444444' } } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [
         { name: 'aaa' }
       ])
-      docs = yield User
+      docs = await User
         .find({ 'posts.comments': { $not: { $lt: '333333333333333333333333' } } })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
@@ -494,8 +494,8 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$nor', function * () {
-      let docs = yield User
+    it('$nor', async function () {
+      let docs = await User
         .find({
           $nor: [
             { name: 'aaa' },
@@ -505,7 +505,7 @@ describe('schema.js', function () {
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
-      docs = yield User
+      docs = await User
         .find({
           $nor: [
             { name: 'aaa' },
@@ -519,8 +519,8 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$all', function * () {
-      let docs = yield User
+    it('$all', async function () {
+      let docs = await User
         .find({
           'posts.comments': { $all: ['444444444444444444444444'] }
         })
@@ -529,14 +529,14 @@ describe('schema.js', function () {
       assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
-      docs = yield User
+      docs = await User
         .find({
           'posts.comments': { $all: ['444444444444444444444444', '333333333333333333333333'] }
         })
         .select({ _id: 0, name: 1 })
         .sort({ name: -1 })
       assert.deepStrictEqual(docs, [])
-      docs = yield User
+      docs = await User
         .find({
           'posts.comments': { $all: ['111111111111111111111111'] }
         })
@@ -545,8 +545,8 @@ describe('schema.js', function () {
       assert.deepStrictEqual(docs, [])
     })
 
-    it('$elemMatch', function * () {
-      let docs = yield User
+    it('$elemMatch', async function () {
+      let docs = await User
         .find({
           posts: {
             $elemMatch: {
@@ -559,7 +559,7 @@ describe('schema.js', function () {
       assert.deepStrictEqual(docs, [
         { name: 'bbb' }
       ])
-      docs = yield User
+      docs = await User
         .find({
           posts: {
             $elemMatch: {
@@ -576,22 +576,22 @@ describe('schema.js', function () {
       ])
     })
 
-    it('$xxx', function * () {
-      let count = yield User.count({ name: { $exists: true } })
+    it('$xxx', async function () {
+      let count = await User.count({ name: { $exists: true } })
       assert.deepStrictEqual(count, 2)
 
-      count = yield User.count({ name: { $exists: true }, refe: '111111111111111111111111' })
+      count = await User.count({ name: { $exists: true }, refe: '111111111111111111111111' })
       assert.deepStrictEqual(count, 1)
 
-      count = yield User.count({ haha: { $exists: true } })
+      count = await User.count({ haha: { $exists: true } })
       assert.deepStrictEqual(count, 0)
     })
   })
 
-  it('beforeFindAndModify', function * () {
+  it('beforeFindAndModify', async function () {
     let error
     try {
-      yield User.findAndModify({ name: 'aaa' }, { age: 1 }, { age: 101 })
+      await User.findAndModify({ name: 'aaa' }, { age: 1 }, { age: 101 })
     } catch (e) {
       error = e
     }
@@ -610,9 +610,9 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeFindAndRemove', function * () {
-    yield User.findAndRemove({ name: 'aaa' })
-    yield User.create({
+  it('beforeFindAndRemove', async function () {
+    await User.findAndRemove({ name: 'aaa' })
+    await User.create({
       name: 'aaa',
       age: 2,
       refe: ObjectId('222222222222222222222222'),
@@ -622,21 +622,21 @@ describe('schema.js', function () {
       }]
     })
 
-    const count = yield User.count()
+    const count = await User.count()
     assert.deepStrictEqual(count, 2)
   })
 
-  it('beforeFindOne', function * () {
-    let doc = yield User.findOne({ refe: '222222222222222222222222' }).select({ _id: 0, name: 1 })
+  it('beforeFindOne', async function () {
+    let doc = await User.findOne({ refe: '222222222222222222222222' }).select({ _id: 0, name: 1 })
     assert.deepStrictEqual(doc, { name: 'aaa' })
 
-    doc = yield User.findOne({ refe: ObjectId('222222222222222222222222') }).select({ _id: 0, name: 1 })
+    doc = await User.findOne({ refe: ObjectId('222222222222222222222222') }).select({ _id: 0, name: 1 })
     assert.deepStrictEqual(doc, { name: 'aaa' })
   })
 
-  it('beforeFindOneAndDelete', function * () {
-    yield User.findOneAndDelete({ refe: '222222222222222222222222' })
-    yield User.create({
+  it('beforeFindOneAndDelete', async function () {
+    await User.findOneAndDelete({ refe: '222222222222222222222222' })
+    await User.create({
       name: 'aaa',
       age: 2,
       refe: ObjectId('222222222222222222222222'),
@@ -646,14 +646,14 @@ describe('schema.js', function () {
       }]
     })
 
-    const count = yield User.count()
+    const count = await User.count()
     assert.deepStrictEqual(count, 2)
   })
 
-  it('beforeFindOneAndReplace', function * () {
+  it('beforeFindOneAndReplace', async function () {
     let error
     try {
-      yield User.findOneAndReplace({ name: 'aaa' }, { name: 1, age: 1 })
+      await User.findOneAndReplace({ name: 'aaa' }, { name: 1, age: 1 })
     } catch (e) {
       error = e
     }
@@ -672,10 +672,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeFindOneAndUpdate', function * () {
+  it('beforeFindOneAndUpdate', async function () {
     let error
     try {
-      yield User.findOneAndUpdate({ name: 'aaa' }, { age: 101 })
+      await User.findOneAndUpdate({ name: 'aaa' }, { age: 101 })
     } catch (e) {
       error = e
     }
@@ -694,10 +694,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeInsert', function * () {
+  it('beforeInsert', async function () {
     let error
     try {
-      yield User.insert({ name: 1, age: 101 })
+      await User.insert({ name: 1, age: 101 })
     } catch (e) {
       error = e
     }
@@ -716,10 +716,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeInsertOne', function * () {
+  it('beforeInsertOne', async function () {
     let error
     try {
-      yield User.insertOne({ name: 1, age: 101 })
+      await User.insertOne({ name: 1, age: 101 })
     } catch (e) {
       error = e
     }
@@ -738,10 +738,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeInsertMany', function * () {
+  it('beforeInsertMany', async function () {
     let error
     try {
-      yield User.insertMany([{ name: 'ccc', age: 3 }, { name: 'ddd', age: -1 }])
+      await User.insertMany([{ name: 'ccc', age: 3 }, { name: 'ddd', age: -1 }])
     } catch (e) {
       error = e
     }
@@ -760,11 +760,11 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeRemove', function * () {
+  it('beforeRemove', async function () {
     try {
-      yield User.remove({ refe: '222222222222222222222222' })
+      await User.remove({ refe: '222222222222222222222222' })
 
-      const count = yield User.count()
+      const count = await User.count()
       assert.deepStrictEqual(count, 1)
     } catch (e) {
       assert.deepStrictEqual(e.op, 'remove')
@@ -774,10 +774,10 @@ describe('schema.js', function () {
     }
   })
 
-  it('beforeReplaceOne', function * () {
+  it('beforeReplaceOne', async function () {
     let error
     try {
-      yield User.replaceOne({ name: 'aaa' }, { name: 'ddd', age: -1 })
+      await User.replaceOne({ name: 'aaa' }, { name: 'ddd', age: -1 })
     } catch (e) {
       error = e
     }
@@ -796,10 +796,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeSave', function * () {
+  it('beforeSave', async function () {
     let error
     try {
-      yield User.save({ name: 1, age: 101 })
+      await User.save({ name: 1, age: 101 })
     } catch (e) {
       error = e
     }
@@ -819,25 +819,25 @@ describe('schema.js', function () {
   })
 
   describe('beforeUpdate', function () {
-    it('update empty doc', function * () {
+    it('update empty doc', async function () {
       const name = String(Date.now())
-      yield User.insert({ name, age: 18 })
-      let user = yield User.findOne({ name })
+      await User.insert({ name, age: 18 })
+      let user = await User.findOne({ name })
       assert.deepStrictEqual(user.name, name)
       assert.deepStrictEqual(user.age, 18)
 
-      yield User.update({ name }, {})
-      user = yield User.findOne({ _id: user._id })
+      await User.update({ name }, {})
+      user = await User.findOne({ _id: user._id })
       assert.ok(user)
       assert.deepStrictEqual(user.name, undefined)
       assert.deepStrictEqual(user.age, undefined)
     })
 
-    it('update doc no schema defined', function * () {
+    it('update doc no schema defined', async function () {
       const name = String(Date.now())
       let error
       try {
-        yield User.update({ name }, { $set: { gender: 'male' } })
+        await User.update({ name }, { $set: { gender: 'male' } })
       } catch (e) {
         error = e
       }
@@ -851,16 +851,16 @@ describe('schema.js', function () {
       })
     })
 
-    it('update posts array', function * () {
+    it('update posts array', async function () {
       let error
       const name = String(Date.now())
-      yield User.insert({ name })
-      const user = yield User.findOne({ name })
+      await User.insert({ name })
+      const user = await User.findOne({ name })
       assert.deepStrictEqual(user.name, name)
       assert.deepStrictEqual(user.posts, undefined)
 
       try {
-        yield User.update({ name }, { posts: ['1'] })
+        await User.update({ name }, { posts: ['1'] })
       } catch (e) {
         error = e
       }
@@ -882,14 +882,14 @@ describe('schema.js', function () {
       })
     })
 
-    it('$inc', function * () {
+    it('$inc', async function () {
       let error
-      yield User.update({ name: 'bbb' }, { $inc: { age: 1 } })
-      const b = yield User.findOne({ name: 'bbb' })
+      await User.update({ name: 'bbb' }, { $inc: { age: 1 } })
+      const b = await User.findOne({ name: 'bbb' })
       assert.deepStrictEqual(b.age, 2)
 
       try {
-        yield User.update({ name: 'aaa' }, { $inc: { refe: 1 } })
+        await User.update({ name: 'aaa' }, { $inc: { refe: 1 } })
       } catch (e) {
         error = e
       }
@@ -908,24 +908,24 @@ describe('schema.js', function () {
       })
     })
 
-    it('$set', function * () {
+    it('$set', async function () {
       let error
 
       // empty doc
       try {
-        yield User.update({ name: 'bbb' }, { $set: {} })
+        await User.update({ name: 'bbb' }, { $set: {} })
       } catch (e) {
         error = e
       }
       assert.ok(error.message.match(/'\$set' is empty/))
 
-      yield User.update({ name: 'bbb' }, { $set: { age: 3 } })
-      let doc = yield User.findOne({ name: 'bbb' })
+      await User.update({ name: 'bbb' }, { $set: { age: 3 } })
+      let doc = await User.findOne({ name: 'bbb' })
       assert.deepStrictEqual(doc.age, 3)
 
       // wrong type
       try {
-        yield User.update({ name: 'aaa' }, { $set: { refe: 1 } })
+        await User.update({ name: 'aaa' }, { $set: { refe: 1 } })
       } catch (e) {
         error = e
       }
@@ -945,7 +945,7 @@ describe('schema.js', function () {
 
       // wrong array
       try {
-        yield User.update({ name: 'aaa' }, { $set: { 'posts.0.comments': ['1'] } })
+        await User.update({ name: 'aaa' }, { $set: { 'posts.0.comments': ['1'] } })
       } catch (e) {
         error = e
       }
@@ -963,16 +963,16 @@ describe('schema.js', function () {
         pluginArgs: []
       })
 
-      yield User.update({ name: 'bbb' }, { $set: { posts: [] } })
-      yield User.update({ name: 'bbb' }, { $set: { 'posts.0.comments': ['111111111111111111111111'] } })
-      doc = yield User.findOne({ name: 'bbb' })
+      await User.update({ name: 'bbb' }, { $set: { posts: [] } })
+      await User.update({ name: 'bbb' }, { $set: { 'posts.0.comments': ['111111111111111111111111'] } })
+      doc = await User.findOne({ name: 'bbb' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 1)
       assert.deepStrictEqual(typeof doc.posts[0].comments[0], 'object')
       assert.deepStrictEqual(doc.posts[0].comments[0].toString(), '111111111111111111111111')
 
       // nested doc
       try {
-        yield User.update({ name: 'bbb' }, { $set: { posts: { title: 1 } } })
+        await User.update({ name: 'bbb' }, { $set: { posts: { title: 1 } } })
       } catch (e) {
         error = e
       }
@@ -991,18 +991,18 @@ describe('schema.js', function () {
       })
     })
 
-    it('$setOnInsert', function * () {
+    it('$setOnInsert', async function () {
       let error
-      yield User.update({ name: 'ccc' }, { $setOnInsert: { age: 3 } }, { upsert: true })
-      const doc = yield User.findOne({ name: 'ccc' }).select({ _id: 0 })
+      await User.update({ name: 'ccc' }, { $setOnInsert: { age: 3 } }, { upsert: true })
+      const doc = await User.findOne({ name: 'ccc' }).select({ _id: 0 })
       assert.deepStrictEqual(doc, {
         name: 'ccc',
         age: 3
       })
-      yield User.deleteOne({ name: 'ccc' })
+      await User.deleteOne({ name: 'ccc' })
 
       try {
-        yield User.update({ name: 'aaa' }, { $setOnInsert: { refe: 1 } })
+        await User.update({ name: 'aaa' }, { $setOnInsert: { refe: 1 } })
       } catch (e) {
         error = e
       }
@@ -1021,10 +1021,10 @@ describe('schema.js', function () {
       })
     })
 
-    it('$addToSet', function * () {
+    it('$addToSet', async function () {
       let error
       try {
-        yield User.update({ name: 'aaa' }, { $addToSet: { 'posts.0.comments': 3 } })
+        await User.update({ name: 'aaa' }, { $addToSet: { 'posts.0.comments': 3 } })
       } catch (e) {
         error = e
       }
@@ -1043,7 +1043,7 @@ describe('schema.js', function () {
         pluginArgs: []
       })
 
-      yield User.update({ name: 'aaa' }, {
+      await User.update({ name: 'aaa' }, {
         $addToSet: {
           posts: {
             title: 'aaa',
@@ -1051,14 +1051,14 @@ describe('schema.js', function () {
           }
         }
       })
-      const doc = yield User.findOne({ name: 'aaa' })
+      const doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].title, 'aaa')
       assert.deepStrictEqual(doc.posts[0].comments[0].toString(), '333333333333333333333333')
       assert.deepStrictEqual(doc.posts[1].title, 'aaa')
       assert.deepStrictEqual(doc.posts[1].comments[0].toString(), '555555555555555555555555')
 
       try {
-        yield User.update({ name: 'aaa' }, {
+        await User.update({ name: 'aaa' }, {
           $addToSet: {
             posts: {
               title: 'aaa',
@@ -1088,37 +1088,37 @@ describe('schema.js', function () {
       })
     })
 
-    it('$pull', function * () {
-      yield User.update({ name: 'aaa' }, {
+    it('$pull', async function () {
+      await User.update({ name: 'aaa' }, {
         $addToSet: {
           'posts.0.comments': '555555555555555555555555'
         }
       })
 
-      let doc = yield User.findOne({ name: 'aaa' })
+      let doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 2)
 
-      yield User.update({ 'posts.comments': '333333333333333333333333' }, { $pull: { 'posts.$.comments': { $in: ['555555555555555555555555'] } } })
-      doc = yield User.findOne({ name: 'aaa' })
+      await User.update({ 'posts.comments': '333333333333333333333333' }, { $pull: { 'posts.$.comments': { $in: ['555555555555555555555555'] } } })
+      doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 1)
     })
 
-    it('$pullAll', function * () {
-      yield User.update({ name: 'aaa' }, {
+    it('$pullAll', async function () {
+      await User.update({ name: 'aaa' }, {
         $addToSet: {
           'posts.0.comments': { $each: ['555555555555555555555555', '666666666666666666666666'] }
         }
       })
-      let doc = yield User.findOne({ name: 'aaa' })
+      let doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 3)
 
-      yield User.update({ 'posts.comments': '333333333333333333333333' }, { $pullAll: { 'posts.$.comments': ['555555555555555555555555', '666666666666666666666666'] } })
-      doc = yield User.findOne({ name: 'aaa' })
+      await User.update({ 'posts.comments': '333333333333333333333333' }, { $pullAll: { 'posts.$.comments': ['555555555555555555555555', '666666666666666666666666'] } })
+      doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 1)
     })
 
-    it('$push', function * () {
-      yield User.update({ name: 'aaa' }, {
+    it('$push', async function () {
+      await User.update({ name: 'aaa' }, {
         $push: {
           posts: {
             title: 'bbb',
@@ -1126,35 +1126,35 @@ describe('schema.js', function () {
           }
         }
       })
-      let doc = yield User.findOne({ name: 'aaa' })
+      let doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts.length, 2)
 
-      yield User.update({ name: 'aaa' }, {
+      await User.update({ name: 'aaa' }, {
         $push: {
           'posts.0.comments': { $each: ['333333333333333333333333', '555555555555555555555555', '666666666666666666666666'] }
         }
       })
-      doc = yield User.findOne({ name: 'aaa' })
+      doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 4)
     })
 
-    it('$xxx', function * () {
-      let doc = yield User.findOne({ name: 'aaa' })
+    it('$xxx', async function () {
+      let doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 1)
 
-      yield User.update({ name: 'aaa' }, {
+      await User.update({ name: 'aaa' }, {
         $pop: {
           'posts.0.comments': 1
         }
       })
-      doc = yield User.findOne({ name: 'aaa' })
+      doc = await User.findOne({ name: 'aaa' })
       assert.deepStrictEqual(doc.posts[0].comments.length, 0)
     })
 
-    it('wrong type', function * () {
+    it('wrong type', async function () {
       let error
       try {
-        yield User.update({ name: 'aaa' }, null)
+        await User.update({ name: 'aaa' }, null)
       } catch (e) {
         error = e
       }
@@ -1169,7 +1169,7 @@ describe('schema.js', function () {
       })
 
       try {
-        yield User.update({ name: 'aaa' }, { age: -1 })
+        await User.update({ name: 'aaa' }, { age: -1 })
       } catch (e) {
         error = e
       }
@@ -1188,7 +1188,7 @@ describe('schema.js', function () {
       })
 
       try {
-        yield User.update({ name: 'aaa' }, { $set: { age: -1 } })
+        await User.update({ name: 'aaa' }, { $set: { age: -1 } })
       } catch (e) {
         error = e
       }
@@ -1209,10 +1209,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeUpdateOne', function * () {
+  it('beforeUpdateOne', async function () {
     let error
     try {
-      yield User.updateOne({ name: 'aaa' }, { age: -1 }, { multi: true })
+      await User.updateOne({ name: 'aaa' }, { age: -1 }, { multi: true })
     } catch (e) {
       error = e
     }
@@ -1231,10 +1231,10 @@ describe('schema.js', function () {
     })
   })
 
-  it('beforeUpdateMany', function * () {
+  it('beforeUpdateMany', async function () {
     let error
     try {
-      yield User.updateMany({ name: 'aaa' }, { age: -1 })
+      await User.updateMany({ name: 'aaa' }, { age: -1 })
     } catch (e) {
       error = e
     }

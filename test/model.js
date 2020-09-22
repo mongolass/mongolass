@@ -7,29 +7,29 @@ const Model = Mongolass.Model
 const mongolass = new Mongolass(MONGODB)
 
 describe('model.js', function () {
-  beforeEach(function * () {
-    yield mongolass.model('User').insertOne({ name: 'aaa', age: 2 })
-    yield mongolass.model('User').insertOne({ name: 'bbb', age: 1 })
+  beforeEach(async function () {
+    await mongolass.model('User').insertOne({ name: 'aaa', age: 2 })
+    await mongolass.model('User').insertOne({ name: 'bbb', age: 1 })
   })
 
-  afterEach(function * () {
-    yield mongolass.model('User').deleteMany()
+  afterEach(async function () {
+    await mongolass.model('User').deleteMany()
   })
 
-  after(function * () {
-    yield mongolass.disconnect()
+  after(async function () {
+    await mongolass.disconnect()
   })
 
-  it('connect', function * () {
-    const coll = yield mongolass.model('User').connect()
+  it('connect', async function () {
+    const coll = await mongolass.model('User').connect()
     assert.ok(coll instanceof Collection)
 
-    const coll2 = yield mongolass.model('User').connect()
+    const coll2 = await mongolass.model('User').connect()
     assert.ok(coll2 instanceof Collection)
     assert.ok(coll === coll2)
   })
 
-  it('model', function * () {
+  it('model', async function () {
     const User = mongolass.model('User')
     const User2 = mongolass.model('User').model('User')
     const User3 = mongolass.model('User').model('notExist').model('User')
@@ -38,7 +38,7 @@ describe('model.js', function () {
     assert.ok(User === User3)
   })
 
-  it('plugin', function * () {
+  it('plugin', async function () {
     let error
     const User = mongolass.model('User')
     try {
@@ -68,7 +68,7 @@ describe('model.js', function () {
         })
       }
     })
-    const usernames = yield User.find().descSortAndToUpper('name')
+    const usernames = await User.find().descSortAndToUpper('name')
     assert.deepStrictEqual(usernames, ['BBB', 'AAA'])
   })
 })

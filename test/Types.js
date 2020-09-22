@@ -18,8 +18,8 @@ const UserSchema = new Schema('User', {
 const User = mongolass.model('User', UserSchema)
 
 describe('Types.js', function () {
-  beforeEach(function * () {
-    yield User.insertOne({
+  beforeEach(async function () {
+    await User.insertOne({
       uid: '111111111111111111111111',
       string: 111,
       number: '1.2',
@@ -30,79 +30,79 @@ describe('Types.js', function () {
     })
   })
 
-  afterEach(function * () {
-    yield User.deleteMany()
+  afterEach(async function () {
+    await User.deleteMany()
   })
 
-  after(function * () {
-    yield mongolass.disconnect()
+  after(async function () {
+    await mongolass.disconnect()
   })
 
-  it('ObjectId is invalid', function * () {
+  it('ObjectId is invalid', async function () {
     let error
     try {
-      yield User.insertOne({ uid: '123' })
+      await User.insertOne({ uid: '123' })
     } catch (e) {
       error = e
     }
     assert.deepStrictEqual(error.message, '($.uid: "123") ✖ (type: ObjectId)')
   })
 
-  it('ObjectId wrong', function * () {
+  it('ObjectId wrong', async function () {
     let error
     try {
-      yield User.insertOne({ uid: 'haha' })
+      await User.insertOne({ uid: 'haha' })
     } catch (e) {
       error = e
     }
     assert.deepStrictEqual(error.message, '($.uid: "haha") ✖ (type: ObjectId)')
   })
 
-  it('ObjectId', function * () {
-    const user = yield User.findOne({ uid: '111111111111111111111111' })
+  it('ObjectId', async function () {
+    const user = await User.findOne({ uid: '111111111111111111111111' })
     assert.ok(typeof user._id === 'object')
     assert.deepStrictEqual(user.uid.toString(), '111111111111111111111111')
   })
 
-  it('String', function * () {
-    const user = yield User.findOne({ string: 111 })
+  it('String', async function () {
+    const user = await User.findOne({ string: 111 })
     assert.deepStrictEqual(user.string, '111')
   })
 
-  it('Number', function * () {
-    let user = yield User.findOne({ number: 1.2 })
+  it('Number', async function () {
+    let user = await User.findOne({ number: 1.2 })
     assert.deepStrictEqual(user.number, 1.2)
 
-    user = yield User.findOne({ number: 'haha' })
+    user = await User.findOne({ number: 'haha' })
     assert.deepStrictEqual(user, null)
   })
 
-  it('Date', function * () {
-    let user = yield User.findOne({ date: '2018-04-13' })
+  it('Date', async function () {
+    let user = await User.findOne({ date: '2018-04-13' })
     assert.deepStrictEqual(user.date, new Date('2018-04-13'))
 
-    user = yield User.findOne({ date: 'haha' })
+    user = await User.findOne({ date: 'haha' })
     assert.deepStrictEqual(user, null)
   })
 
-  it('Buffer', function * () {
-    let user = yield User.findOne({ buffer: '123' })
+  it('Buffer', async function () {
+    let user = await User.findOne({ buffer: '123' })
     assert.deepStrictEqual(user.buffer.toString(), '123')
 
-    user = yield User.findOne({ buffer: Buffer.from('123') })
+    user = await User.findOne({ buffer: Buffer.from('123') })
     assert.deepStrictEqual(user.buffer.toString(), '123')
 
-    user = yield User.findOne({ buffer: 1 })
+    user = await User.findOne({ buffer: 1 })
     assert.deepStrictEqual(user, null)
   })
 
-  it('Boolean', function * () {
-    const user = yield User.findOne({ boolean: 1 })
+  it('Boolean', async function () {
+    const user = await User.findOne({ boolean: 1 })
     assert.deepStrictEqual(user.boolean, true)
   })
 
-  it('Mixed', function * () {
-    const user = yield User.findOne({ uid: '111111111111111111111111' })
+  it('Mixed', async function () {
+    const user = await User.findOne({ uid: '111111111111111111111111' })
     assert.deepStrictEqual(user.mixed, { names: ['tom', 'xp'] })
   })
 })
